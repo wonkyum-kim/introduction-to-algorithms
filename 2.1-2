@@ -1,0 +1,32 @@
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+template <typename T>
+void insertion_sort(vector<T>& vec, const int& end)
+{
+	for (int i = 0; i <end-1; ++i)
+	{
+		for (int j = i + 1; j > 0 && vec[j - 1] < vec[j]; --j)
+			swap(vec[j], vec[j - 1]);
+	}
+}
+
+
+template<typename T>
+void print_sort(vector<T>& vec, const int& n)
+{
+	for (int i = 0; i < n; ++i)
+		cout << vec[i] << " ";
+}
+
+
+int main()
+{
+	vector<int> vec{ 31, 41, 59, 26, 41, 58};
+	int n = vec.size();
+	insertion_sort(vec, n);
+	print_sort(vec, n);
+	return 0;
+}
