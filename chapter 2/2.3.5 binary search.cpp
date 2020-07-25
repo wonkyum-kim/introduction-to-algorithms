@@ -2,7 +2,7 @@
 #include <vector>
 
 template<typename T>
-int BinarySearch(std::vector<T>& A, size_t left, size_t right, T target)
+int BinarySearch(std::vector<T>& A, size_t left, size_t right, const T& target)
 {
 	if (left > right)	return -1;
 
