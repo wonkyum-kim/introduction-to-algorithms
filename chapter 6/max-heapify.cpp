@@ -48,6 +48,6 @@ template<typename T>
 void build_max_heap(std::vector<T>& A)
 {
 	auto A_heap_size = A.size();
-	for (size_t i = A.size() / 2; i > 0; i--)
+	for (size_t i = A.size() / 2 - 1; i >= 0; i--)
 		max_heapify(A, i);
 }
