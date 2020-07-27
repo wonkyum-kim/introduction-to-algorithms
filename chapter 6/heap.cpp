@@ -25,17 +25,13 @@ void max_heapify(std::vector<T>& A, size_t i)
 {
 	size_t l = left(i);
 	size_t r = right(i);
-	size_t largest;
+	size_t largest = i;
 
 	if (l <= A.size() && A[l] > A[i])
 		largest = l;
-	else
-		largest = i;
 
 	if (r <= A.size() && A[r] > A[i])
 		largest = r;
-	else
-		largest = i;
 
 	if (largest != i)
 	{
