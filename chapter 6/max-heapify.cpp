@@ -43,3 +43,11 @@ void max_heapify(std::vector<T>& A, size_t i)
 		max_heapify(A, largest);
 	}
 }
+
+template<typename T>
+void build_max_heap(std::vector<T>& A)
+{
+	auto A_heap_size = A.size();
+	for (size_t i = A.size() / 2; i > 0; i--)
+		max_heapify(A, i);
+}
