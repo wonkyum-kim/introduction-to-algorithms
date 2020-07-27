@@ -2,14 +2,19 @@
 #include <algorithm>
 #include <vector>
 
-size_t left(size_t& l)
+size_t parent(const size_t& i)
 {
-	return 2*l;
+	return i/2;
 }
 
-size_t right(size_t& r)
+size_t left(size_t& i)
 {
-	return 2*r + 1;
+	return 2*i;
+}
+
+size_t right(size_t& i)
+{
+	return 2*i + 1;
 }
 
 template <typename T>
