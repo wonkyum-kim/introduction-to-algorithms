@@ -2,7 +2,7 @@
 #include <iostream>
 
 template <typename T, typename Comp = std::greater<T>>
-void insertionSort(std::vector<T>& A, Comp comp = Comp()) 
+void insertion-sort(std::vector<T>& A, Comp comp = Comp()) 
 {
     for (size_t j = 1; j < A.size(); ++j) 
     {
