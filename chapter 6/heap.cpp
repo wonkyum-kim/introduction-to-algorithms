@@ -20,29 +20,30 @@ size_t right(const size_t& i)
 }
 
 template <typename T>
-void max_heapify(std::pair<std::vector<T>&, size_t>& A, size_t i)
+void max_heapify(std::pair<std::vector<T>&, size_t>& B, size_t i)
 {
 	size_t l = left(i);
 	size_t r = right(i);
 	size_t largest = i;
 
-	if (l <= A.second && A.first[l] > A.first[i])
+	if (l <= B.second && B.first[l] > B.first[i])
 		largest = l;
 
-	if (r <= A.second && A.first[r] > A.first[i])
+	if (r <= B.second && B.first[r] > B.first[i])
 		largest = r;
 
 	if (largest != i)
 	{
-		std::swap(A.first[i], A.first[largest]);
-		max_heapify(A, largest);
+		std::swap(B.first[i], B.first[largest]);
+		max_heapify(B, largest);
 	}
 }
 
 template<typename T>
-void build_max_heap(std::pair<std::vector<T>&, size_t>& A)
+void build_max_heap(std::vector<T>& A)
 {
-	A.second = A.size();
-	for (size_t i = A.first.size() / 2; i >= 1; i--)
-		max_heapify(A, i);
+        size_t A_heap_size = A.size()-1;
+        auto B = std::make_pair(A, A_heap_size);
+	for (size_t i = A_heap_size / 2; i >= 1; --i)
+		max_heapify(B, i);
 }
