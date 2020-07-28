@@ -19,7 +19,6 @@ size_t right(const size_t& i)
 	return 2*i + 1;
 }
 
-// heapsize argument?
 template <typename T>
 void max_heapify(std::pair<std::vector<T>&, size_t>& A, size_t i)
 {
