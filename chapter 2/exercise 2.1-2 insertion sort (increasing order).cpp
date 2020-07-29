@@ -11,9 +11,15 @@ void insertion-sort(std::vector<T>& A)
         while (A[i] > key) 
         {
             A[i + 1] = A[i];
-            i--;
+            if (i > 0)
+                i--;
+            else
+                break;
         }
-        A[i + 1] = key;
+        if (i = 0)
+            A[i] = key;
+        else
+            A[i + 1] = key;
     }
 }
 
