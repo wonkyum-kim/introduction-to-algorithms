@@ -20,7 +20,7 @@ void insertion-sort(std::vector<T>& A)
 int main() 
 {
     std::vector<int> v{ 5, 2, 3, 1, 4 };
-    insertionSort(v);
+    insertion_sort(v);
     for (auto n : v) 
         std::cout << n << ' ';
 }
