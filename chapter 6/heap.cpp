@@ -44,7 +44,7 @@ void build_max_heap(std::vector<T>& A)
 {
         size_t A_heap_size = A.size()-1;
         auto B = std::make_pair(A, A_heap_size);
-        // terminal nodes are start at A_heap_size / 2
+        // terminal nodes are start at A_heap_size / 2 + 1
 	for (size_t i = A_heap_size / 2; i >= 1; --i)
 		max_heapify(B, i);
 }
