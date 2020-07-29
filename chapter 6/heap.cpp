@@ -48,3 +48,15 @@ void build_max_heap(std::vector<T>& A)
 	for (size_t i = A_heap_size / 2; i >= 1; --i)
 		max_heapify(B, i);
 }
+
+template<typename T>
+void heap_sort(std::pair<std::vector<T>&, size_t>& A)
+{
+	build_max_heap(A);
+	for(size_t i = A.first.size() - 1; i >=2; --i)
+	{
+	    std::swap(A.first[1], A.first[i]);
+	    A.second--;
+	}
+	max_heapify(A, 1);
+}
