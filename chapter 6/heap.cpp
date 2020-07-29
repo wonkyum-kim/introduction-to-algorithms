@@ -62,6 +62,5 @@ int main()
     heap_sort(A, A.size());
     for (int i = 0; i < A.size(); i++)
         std::cout << A[i] << " ";
-   
     return 0;
 }
