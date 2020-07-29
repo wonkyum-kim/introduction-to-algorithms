@@ -52,7 +52,7 @@ void build_max_heap(std::vector<T>& A)
 template<typename T>
 void heap_sort(std::pair<std::vector<T>&, size_t>& A)
 {
-	build_max_heap(A);
+	build_max_heap(A.first);
 	for(size_t i = A.first.size() - 1; i >=2; --i)
 	{
 	    std::swap(A.first[1], A.first[i]);
