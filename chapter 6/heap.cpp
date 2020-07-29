@@ -57,6 +57,6 @@ void heap_sort(std::pair<std::vector<T>&, size_t>& A)
 	{
 	    std::swap(A.first[1], A.first[i]);
 	    A.second--;
-	}
-	max_heapify(A, 1);
+            max_heapify(A, 1);
+        }
 }
