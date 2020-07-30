@@ -28,6 +28,6 @@ int main()
 	std::vector<int> B(A.size());
 
 	counting_sort(A, B, C);
-	for (auto x : A)
+	for (auto x : B)
 		std::cout << x << ' ';
 }
