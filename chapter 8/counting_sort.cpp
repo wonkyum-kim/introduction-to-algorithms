@@ -4,14 +4,14 @@
 
 void counting_sort(std::vector<int>& A, std::vector<int>& B, std::vector<int>& C)
 {
-	for (auto j = 0; j < A.size(); j++)
-		C[A[j]]++;
-	for (auto i = 1; i < C.size(); i++)
-		C[i] += C[i - 1];
-	for (int i = A.size() - 1; i >= 0; i--)
+	for (auto i = 0; i < A.size(); i++)
+		C[A[i]]++;
+	for (auto j = 1; j < C.size(); j++)
+		C[j] += C[j - 1];
+	for (int k = A.size() - 1; k >= 0; k--)
 	{
-		B[C[A[i]] - 1] = A[i];
-		C[A[i]]--;
+		B[C[A[k]] - 1] = A[k];
+		C[A[k]]--;
 	}
 }
 
