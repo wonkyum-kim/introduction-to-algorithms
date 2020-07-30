@@ -8,12 +8,11 @@ void counting_sort(std::vector<int>& A, std::vector<int>& B, std::vector<int>& C
 		C[A[j]]++;
 	for (auto i = 1; i < C.size(); i++)
 		C[i] += C[i - 1];
-	for (auto i = A.size() - 1; i > 0; i--)
+	for (int i = A.size() - 1; i >= 0; i--)
 	{
 		B[C[A[i]] - 1] = A[i];
 		C[A[i]]--;
 	}
-	B[C[A[0]] - 1] = A[0];
 }
 
 
