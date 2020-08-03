@@ -6,7 +6,7 @@
 using ans_type = std::tuple<size_t, size_t, int>;
 
 template<typename T>
-ans_type brute_force(std::vector<T> A)
+ans_type brute_force(const std::vector<T>& A)
 {
 	int max_sum = std::numeric_limits<int>::min();		// sentinel value;
 	size_t max_left = 1;
