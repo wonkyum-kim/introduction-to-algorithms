@@ -9,7 +9,7 @@ template<typename T>
 ans_type find_maximum_subarray_linear(const std::vector<T>& A)
 {
 	int max_sum = std::numeric_limits<int>::min();		// sentinel value
-	int running sum = 0;
+	int running_sum = 0;
 	size_t max_left = 0;
 	size_t max_right = 0;
 	size_t curr_left = 0;
@@ -17,7 +17,7 @@ ans_type find_maximum_subarray_linear(const std::vector<T>& A)
 
 	for (size_t i = 0; i < A.size(); i++)
 	{
-		if (running sum <= 0)
+		if (running_sum <= 0)
 		{
 			curr_left = i;
 			curr_right = i;
