@@ -6,7 +6,7 @@
 using ans_type = std::tuple<size_t, size_t, int>;
 
 template<typename T>
-ans_type find_max_crossing_subarray(std::vector<T>& A, size_t low, size_t mid, size_t high)
+ans_type find_max_crossing_subarray(const std::vector<T>& A, size_t low, size_t mid, size_t high)
 {
 	int left_sum = std::numeric_limits<int>::min();		// sentinel value
 	int sum = 0;
@@ -40,7 +40,7 @@ ans_type find_max_crossing_subarray(std::vector<T>& A, size_t low, size_t mid, s
 }
 
 template <typename T>
-ans_type find_maximum_subarray(std::vector<T>& A, size_t low, size_t high)
+ans_type find_maximum_subarray(const std::vector<T>& A, size_t low, size_t high)
 {
 	if (high == low)	// only one element
 		return { low, high, A[low] };
