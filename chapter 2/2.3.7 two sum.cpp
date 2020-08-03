@@ -16,7 +16,7 @@ bool two_sum(std::vector<T>& S, const T& key)
 		else if ((S[left] + S[right]) > key)
 			right -= 1;
 		else
-			true;
+			return true;
 	}
 
 	return false;
