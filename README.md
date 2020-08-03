@@ -1,3 +1,3 @@
 # introduction-to-algorithms
 
-solution for exercises
+solution for exercises and problems
