@@ -1,3 +1,52 @@
+
+// start !
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+// the index of root node is 1.
+int parent(int i)
+{
+    return i / 2;
+}
+
+int left(int i)
+{
+    return 2 * i;
+}
+
+int right(int i)
+{
+    return 2 * i + 1;
+}
+
+
+template<typename T>
+void max_heapify(std::vector<T>& A, int h_size, size_t i)
+{
+    size_t l = left(i);
+    size_t r = right(i);
+    size_t largest = i;
+    
+    if(l <= h_size && A[l] > A[i])
+        largest = l;
+    
+    if(r <= h_size && A[r] > A[largest])
+        largest = r;
+        
+    if(largest != i)
+    {
+        std::swap(A[i], A[largest]);
+        mx_hepify(A,h_size,largest);
+    }
+}
+
+
+
+
+//*********************************************************************************************
+
 #include<iostream>
 #include<vector>
 
