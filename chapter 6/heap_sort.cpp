@@ -42,7 +42,24 @@ void max_heapify(std::vector<T>& A, int h_size, size_t i)
     }
 }
 
+template<typename T>
+void build_max_heap(std::vector<T>& A, int h_size)
+{
+    for(size_t i = h_size / 2; i > 0; --i)
+        max_heapify(A, h_size, i);
+}
 
+template<typename T>
+void heap_sort(std::vector<T>& A, int h_size)
+{
+    buld_max_heap(A, h_size);
+    for(size_t i = h_size; i > 1; --i)
+    {
+        std::swap(A[1], A[i]);
+        h_size -= 1;
+        max_heapify(A,1);
+    }
+}
 
 
 //*********************************************************************************************
