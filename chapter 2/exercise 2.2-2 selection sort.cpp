@@ -2,7 +2,7 @@
 #include <vector>
 
 template<typename T>
-void selectionSort(std::vector<T>& A)
+void selection_sort(std::vector<T>& A)
 {
 	for (size_t i = 0; i < A.size() - 1; ++i)
 	{
@@ -19,7 +19,7 @@ void selectionSort(std::vector<T>& A)
 int main()
 {
 	std::vector<int>A{ 5,2,4,3,1 };
-	selectionSort(A);
+	selection_sort(A);
 	for (auto& x : A)
 		std::cout << x << " ";
 	return 0;
