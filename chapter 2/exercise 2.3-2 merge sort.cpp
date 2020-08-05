@@ -34,13 +34,13 @@ void merge(std::vector<T>& A, size_t left, size_t mid, size_t right)
 }
 
 template<typename T>
-void MergeSort(std::vector<T>& A, size_t left, size_t right)
+void merge_sort(std::vector<T>& A, size_t left, size_t right)
 {
 	if (left < right)
 	{
 		size_t mid = (left + right) / 2;
-		MergeSort(A, left, mid);
-		MergeSort(A, mid + 1, right);
+		merge_sort(A, left, mid);
+		merge_sort(A, mid + 1, right);
 		merge(A, left, mid, right);
 	}
 }
@@ -49,7 +49,7 @@ int main()
 {
 	std::vector<int> A{ 5,2,4,1,3 };
 
-	MergeSort(A, 0, A.size() - 1);
+	merge_sort(A, 0, A.size() - 1);
 	for (auto& x : A)
 		std::cout << x << ' ';
 
