@@ -18,7 +18,6 @@ bool stack_empty(const Stack<T, N>& s)
 template<typename T, size_t N>
 void push(Stack<T, N>& s, const T& x)
 {
-
     s.data[s.top++] = x;
 }
 
