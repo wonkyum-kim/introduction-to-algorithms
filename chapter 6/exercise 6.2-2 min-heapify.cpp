@@ -12,7 +12,7 @@ void max_heapify(std::vector<T>& A, int h_size, size_t i)
     if(l <= h_size && A[l] < A[i])
         smallest = l;
     
-    if(r <= h_size && A[r] < A[i])
+    if(r <= h_size && A[r] < A[smallest])
         smallest = r;
         
     if(largest != i)
