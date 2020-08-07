@@ -41,7 +41,7 @@ T dequeue(Queue<T, N>& q)
     if(q.head == q.data.size())     // circular Queue
     {
         q.head = 0;
-        T x = q.data[q.head];
+        T x = q.data[q.head++];
         return x;
     }
     else
