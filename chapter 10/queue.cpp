@@ -21,7 +21,7 @@ void enqueue(Queue<T, N>& q, const T x)
     if(q.tail == q.data.size()) // circular queue
     {
         q.tail = 0;
-        q.data[q.tail] = x;
+        q.data[q.tail++] = x;
     }
     else
     {
