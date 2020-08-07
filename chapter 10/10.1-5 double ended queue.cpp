@@ -23,13 +23,11 @@ void Double_ended_queue<T, N>::head_enqueue(const T x)
         throw std::overflow_error("Queue overflow");
     else
     {
-        if(head < 0)        // circular queue
-        {
+        if(head == 0)        
             head == data.size() - 1;
-            data[head--] = x;
-        }
         else
-            data[head--] = x;
+            head --;
+        data[head] = x;
     }
 }
 
@@ -41,13 +39,11 @@ void Double_ended_queue<T, N>::tail_enqueue(const T x)
         throw std::overflow_error("Queue overflow");
     else
     {
-        if(tail == data.size())     // circular queue
-        {
+        data[tail] = x;
+        if(tail == data.size() - 1)     
             tail = 0;
-            data[tail++] = x;
-        }
         else
-            data[tail++] = x;
+            tail++;
     }
 }
 
@@ -59,17 +55,12 @@ T Double_ended_queue<T, N>::head_dequeue()
         throw std::underflow_error("Queue underflow");
     else
     {
-        if(head == data.size())
-        {
+        T x = data[head];
+        if(head == data.size() - 1)
             head = 0;
-            T x = data[head++];
-            return x;
-        }
         else
-        {
-            T x = data[head++];
-            return x;
-        }
+            head++;
+        return x;
     }
 }
 
@@ -81,31 +72,25 @@ T Double_ended_queue<T, N>::tail_dequeue()
         throw std::underflow_error("Queue underflow");
     else
     {
-        if(tail < 0)
-        {
+        if(tail == 0)
             tail = data.size() - 1;
-            T x = data[tail--];
-            return x;
-        }
         else
-        {
-            T x = data[tail--];
-            return x;
-        }
+            tail--;
+        T x = data[tail];
+        return x;
     }
 }
 
 int main()
 {
     std::array<int, 4> data;
-    int head = -1;
-    int tail = 0;
+    int head = 1;
+    int tail = 1;
     Double_ended_queue dq {data, head, tail};
     
     dq.tail_enqueue(1);
     dq.tail_enqueue(2);
     dq.tail_enqueue(3);
-    dq.tail_enqueue(4);     // 1 2 4 3
     
-    std::cout << dq.tail_dequeue() << dq.tail_dequeue() << dq.tail_dequeue() << dq.tail_dequeue();
+    std::cout << dq.tail_dequeue() << dq.tail_dequeue() << dq.tail_dequeue();
 }
