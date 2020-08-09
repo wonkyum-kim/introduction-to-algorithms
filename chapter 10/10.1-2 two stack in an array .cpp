@@ -7,8 +7,8 @@ struct Two_Stack {
     std::array<T, N> data;
     size_t left;
     size_t right;
-    
-    Two_Stack(std::array<T, N> d, size_t l, size_t r) : data{d}, left{l}, right{r}  {};
+
+    Two_Stack(size_t l, size_t r) : data{}, left{ l }, right{ r }  {};
     void push_l(const T x);
     void push_r(const T x);
     T pop_l();
@@ -18,7 +18,7 @@ struct Two_Stack {
 template<typename T, size_t N>
 void Two_Stack<T, N>::push_l(const T x)
 {
-    if(right < left)
+    if (right < left)
         throw std::overflow_error("Stack overflow");
     else
         data[left++] = x;
@@ -27,7 +27,7 @@ void Two_Stack<T, N>::push_l(const T x)
 template<typename T, size_t N>
 void Two_Stack<T, N>::push_r(const T x)
 {
-    if(right < left)
+    if (right < left)
         throw std::overflow_error("Stack overflow");
     else
         data[right--] = x;
@@ -36,7 +36,7 @@ void Two_Stack<T, N>::push_r(const T x)
 template<typename T, size_t N>
 T Two_Stack<T, N>::pop_l()
 {
-    if(left == 0)
+    if (left == 0)
         return data[0];
     else
         return data[--left];
@@ -45,7 +45,7 @@ T Two_Stack<T, N>::pop_l()
 template<typename T, size_t N>
 T Two_Stack<T, N>::pop_r()
 {
-    if(right == data.size() - 1)
+    if (right == data.size() - 1)
         return data[data.size() - 1];
     else
         return data[++right];
@@ -53,10 +53,7 @@ T Two_Stack<T, N>::pop_r()
 
 int main()
 {
-    std::array<int, 4> data;
-    size_t left = 0;
-    size_t right = data.size() - 1;     // 3
-    Two_Stack ts {data, left, right};
+    Two_Stack<int,50> ts{0, 49};
     ts.push_l(1);
     ts.push_l(2);
     ts.push_r(4);
