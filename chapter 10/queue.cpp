@@ -1,68 +1,45 @@
-#include<iostream>
-#include<array>
-#include<stdexcept>
+#include <iostream>
+#include <array>
+#include <stdexcept>
 
 template<typename T, size_t N>
-struct Queue{
-    std::array<T, N> data;
-    size_t head = 0;
-    size_t tail = 0;
-    Queue(std::array<T, N> d, size_t h, size_t t) : data{d}, head{h}, tail{t}   {};
+struct Queue {
+	std::array<T, N> data;
+	int head;
+	int tail;
+
+	Queue(int h, int t) : data{}, head{ h }, tail{ t }	{};
+	void enqueue(const T x);
+	T dequeue();
 };
 
 template<typename T, size_t N>
-void enqueue(Queue<T, N>& q, const T x)
+void Queue<T, N>::enqueue(const T x)
 {
-    // array is full
-    if(q.head == q.tail + 1 || (q.head == 0 && q.tail == q.data.size()))
-        throw std::overflow_error("Queue overflow");
-        
-    
-    if(q.tail == q.data.size()) // circular queue
-    {
-        q.tail = 0;
-        q.data[q.tail++] = x;
-    }
-    else
-    {
-        q.data[q.tail] = x;
-        q.tail++;
-    }
-        
+	data[tail] = x;
+	if (tail == data.size() - 1)
+		tail = 0;
+	else
+		tail++;
 }
 
 template<typename T, size_t N>
-T dequeue(Queue<T, N>& q)
+T Queue<T, N>::dequeue()
 {
-    // array is empty
-    if(q.head == q.tail)
-        throw std::underflow_error("Queue underflow");
-    
-    if(q.head == q.data.size())     // circular Queue
-    {
-        q.head = 0;
-        T x = q.data[q.head++];
-        return x;
-    }
-    else
-    {
-        T x = q.data[q.head];
-        q.head++;
-        return x;
-    }
+	T x = data[head];
+	if (head == data.size() - 1)
+		head = 0;
+	else
+		head++;
+	return x;
 }
 
 int main()
 {
-    std::array<int, 4> data;
-    size_t head = 1;
-    size_t tail = 1;
-    
-    Queue q {data, head, tail};
-    
-    for(auto i = 0; i < 4; ++i)
-        enqueue(q, i);
-    
-    for(auto j = 0; j < 4; ++j)
-        std::cout << dequeue(q) << " dequeue a element" << '\n';
+	Queue<int, 50> q(0, 0);
+	q.enqueue(0);
+	q.enqueue(1);
+	q.enqueue(2);
+	q.enqueue(3);
+	std::cout << q.dequeue() << q.dequeue() << q.dequeue() << q.dequeue();
 }
