@@ -1,43 +1,50 @@
-#include<iostream>
-#include<array>
-#include<stdexcept>
+#include <iostream>
+#include <array>
+#include <stdexcept>
+
 
 template<typename T, size_t N>
 struct Stack {
-    std::array<T, N> data;
-    size_t top = 0;
-    Stack(std::array<T, N> d, size_t t) : data{d}, top{t}   {};
+	std::array<T, N> data;
+	int top;
+
+	Stack(int t) : data{}, top{ t }	{};
+	bool stack_empty();
+	void push(const T x);
+	T pop();
 };
 
 template<typename T, size_t N>
-bool stack_empty(const Stack<T, N>& s)
+bool Stack<T, N>::stack_empty()
 {
-    return s.top == 0;
+	if (top == -1)
+		return true;
+	else
+		return false;
 }
 
 template<typename T, size_t N>
-void push(Stack<T, N>& s, const T& x)
+void Stack<T, N>::push(const T x)
 {
-    s.data[s.top++] = x;
+	data[++top] = x;
 }
 
 template<typename T, size_t N>
-T pop(Stack<T, N>& s)
+T Stack<T, N>::pop()
 {
-    if(stack_empty(s))
-        throw std::underflow_error("Stack underflow");
-    else
-        return s.data[s.top--];
+	if (stack_empty())
+		throw std::underflow_error("stack underflow");
+	else
+		return data[top--];
 }
 
 int main()
 {
-    std::array<int, 5> data;
-    size_t top = 0;
-    Stack s {data, top};
-    for(auto i = 1; i <= 5; i++)
-        push(s, i);
-    pop(s);
-    for(auto j = 0; j < s.top; j++)
-        std::cout << s.data[j] << ' ';
+	Stack<int, 50> s(-1);
+	s.push(1);	// top == 0
+	s.push(2);	// top == 1
+	s.push(3);	// top == 2
+	s.push(4);	// top == 3
+	s.push(5);	// top == 4
+	std::cout << s.pop() << s.pop() << s.pop() << s.pop() << s.pop();
 }
