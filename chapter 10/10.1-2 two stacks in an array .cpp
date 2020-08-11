@@ -37,7 +37,7 @@ template<typename T, size_t N>
 T Two_Stack<T, N>::pop_l()
 {
     if (left == 0)
-        return data[0];
+        throw std::underflow_error("stack underflow");
     else
         return data[--left];
 }
@@ -46,7 +46,7 @@ template<typename T, size_t N>
 T Two_Stack<T, N>::pop_r()
 {
     if (right == data.size() - 1)
-        return data[data.size() - 1];
+        throw std::underflow_error("stack underflow");
     else
         return data[++right];
 }
