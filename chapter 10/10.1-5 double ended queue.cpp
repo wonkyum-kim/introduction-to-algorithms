@@ -18,21 +18,31 @@ struct Double_ended_queue {
 template<typename T, size_t N>
 void Double_ended_queue<T, N>::head_enqueue(const T x)
 {
-    if (head == 0)
-        head == data.size() - 1;
+    if (head == tail + 1 || (head == 0 && tail == data.size() - 1))
+        throw std::overflow_error("queue overflow");
     else
-        head--;
-    data[head] = x;
+    {
+        if (head == 0)
+            head == data.size() - 1;
+        else
+            head--;
+        data[head] = x;
+    }
 }
 
 template<typename T, size_t N>
 void Double_ended_queue<T, N>::tail_enqueue(const T x)
 {
-    data[tail] = x;
-    if (tail == data.size() - 1)
-        tail = 0;
+    if (head == tail + 1 || (head == 0 && tail == data.size() - 1))
+        throw std::overflow_error("queue overflow");
     else
-        tail++;
+    {
+        data[tail] = x;
+        if (tail == data.size() - 1)
+            tail = 0;
+        else
+            tail++;
+    }
 }
 
 template<typename T, size_t N>
@@ -71,10 +81,9 @@ T Double_ended_queue<T, N>::tail_dequeue()
 
 int main()
 {
-    std::array<int, 4> data;
     int head = 0;
     int tail = 0;
-    Double_ended_queue<int, 50> dq{head, tail };
+    Double_ended_queue<int, 50> dq{ head, tail };
 
     dq.tail_enqueue(1);
     dq.tail_enqueue(2);
