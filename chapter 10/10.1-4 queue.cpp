@@ -44,4 +44,4 @@ int main()
  	q.enqueue(2);
  	q.enqueue(3);
  	std::cout << q.dequeue() << q.dequeue() << q.dequeue() << q.dequeue(); 
-}
+}`
