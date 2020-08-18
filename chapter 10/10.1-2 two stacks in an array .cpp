@@ -53,7 +53,7 @@ T Two_Stack<T, N>::pop_r()
 
 int main()
 {
-    Two_Stack<int,50> ts{0, 49};
+    Two_Stack<int,50> ts{-1, 50};
     ts.push_l(1);
     ts.push_l(2);
     ts.push_r(4);
