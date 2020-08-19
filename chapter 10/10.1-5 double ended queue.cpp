@@ -7,7 +7,7 @@ struct Double_ended_queue {
     std::array<T, N> data;
     int head = 0;
     int tail = 0;
-    Double_ended_queue(int h, int t) : data{}, head{ h }, tail{ t }   {};
+    Double_ended_queue() : data{}, head{ 0 }, tail{ 0 }   {};
 
     void head_enqueue(const T x);
     void tail_enqueue(const T x);
@@ -81,9 +81,7 @@ T Double_ended_queue<T, N>::tail_dequeue()
 
 int main()
 {
-    int head = 0;
-    int tail = 0;
-    Double_ended_queue<int, 50> dq{ head, tail };
+    Double_ended_queue<int, 50> dq;
 
     dq.tail_enqueue(1);
     dq.tail_enqueue(2);
