@@ -61,3 +61,4 @@ int main()
 
     std::cout << ts.pop_l() << ' ' << ts.pop_l() << ' ' << ts.pop_r() << ' ' << ts.pop_r();     // 2 1 3 4
 }
+    
