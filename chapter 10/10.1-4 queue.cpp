@@ -15,8 +15,8 @@ struct Queue {
 template<typename T, size_t N> 
 void Queue<T, N>::enqueue(const T x) 
 {
- if (head == tail + 1 || (head == 0 && tail == data.size() - 1))
-   throw std::overflow_error ("queue overflow");
+        if (head == tail + 1 || (head == 0 && tail == data.size() - 1))
+                throw std::overflow_error ("queue overflow");
  	data[tail] = x;
  	if (tail == data.size() - 1)
  		tail = 0;
@@ -27,8 +27,8 @@ void Queue<T, N>::enqueue(const T x)
 template<typename T, size_t N> 
 T Queue<T, N>::dequeue() 
 {
- if (head == tail)
-   throw std::underflow_error ("queue underflow");
+        if (head == tail)
+                throw std::underflow_error ("queue underflow");
  	T x = data[head];
  	if (head == data.size() - 1)
  		head = 0;
