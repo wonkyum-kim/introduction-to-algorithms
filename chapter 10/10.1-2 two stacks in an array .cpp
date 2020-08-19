@@ -36,19 +36,19 @@ void Two_Stack<T, N>::push_r(const T x)
 template<typename T, size_t N>
 T Two_Stack<T, N>::pop_l()
 {
-    if (left == 0)
+    if (left == -1)
         throw std::underflow_error("stack underflow");
     else
-        return data[--left];
+        return data[left--];
 }
 
 template<typename T, size_t N>
 T Two_Stack<T, N>::pop_r()
 {
-    if (right == data.size() - 1)
+    if (right == data.size())
         throw std::underflow_error("stack underflow");
     else
-        return data[++right];
+        return data[right++];
 }
 
 int main()
