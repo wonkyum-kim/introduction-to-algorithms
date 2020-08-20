@@ -37,7 +37,7 @@ void merge_sort(std::vector<T>& A, size_t p, size_t r)
     if(p < r) {
         size_t q = (p + r) / 2;
         merge_sort(A, p, q);
-        merge_sort(A, q+1, r);
+        merge_sort(A, q + 1, r);
         merge(A, p, q, r);
     }
     
