@@ -4,7 +4,7 @@
 
 // combine
 template<typename T>
-void merge(std::vector<T>& A, size_t p, size_t q, size_t r)
+void merge(std::vector<T>& A, const size_t p, const size_t q, const size_t r)
 {
     size_t n1 = q - p + 1;  // L.size() 
     size_t n2 = r - q;      // R.size() 
@@ -32,7 +32,7 @@ void merge(std::vector<T>& A, size_t p, size_t q, size_t r)
 
 // devide and conquer
 template<typename T>
-void merge_sort(std::vector<T>& A, size_t p, size_t r)
+void merge_sort(std::vector<T>& A, const size_t p, const size_t r)
 {
     if(p < r) {
         size_t q = (p + r) / 2;
@@ -40,7 +40,6 @@ void merge_sort(std::vector<T>& A, size_t p, size_t r)
         merge_sort(A, q + 1, r);
         merge(A, p, q, r);
     }
-    
 }
 
 int main()
