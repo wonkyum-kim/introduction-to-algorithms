@@ -4,12 +4,10 @@
 template <typename T>
 void insertion_sort(std::vector<T>& A)
 {
-    for (auto j = 1; j < A.size(); ++j)
-    {
+    for (auto j = 1; j < A.size(); ++j) {
         T key = A[j];
         auto i = j - 1;
-        while (i>=0 && A[i] < key)
-        {
+        while (i>=0 && A[i] < key) {
             A[i + 1] = A[i];
             i--;
         }
