@@ -29,3 +29,24 @@ void merge(std::vector<T>& A, size_t p, size_t q, size_t r)
             A[k] = R[j++];
     }
 }
+
+// devide and conquer
+template<typename T>
+void merge_sort(std::vector<T>& A, size_t p, size_t r)
+{
+    if(p < r) {
+        size_t q = (p + r) / 2;
+        merge_sort(A, p, q);
+        merge_sort(A, q+1, r);
+        merge(A, p, q, r);
+    }
+    
+}
+
+int main()
+{
+    std::vector<int> A{ 5,2,4,1,3 };
+	merge_sort(A, 0, A.size() - 1);
+	for (auto& x : A)
+		std::cout << x << ' ';
+}
