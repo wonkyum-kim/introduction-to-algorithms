@@ -125,3 +125,4 @@ int main()
     for (auto& x : A)
         std::cout << x << ' ';
 }
+	
