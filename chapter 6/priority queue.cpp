@@ -102,7 +102,7 @@ int main()
     std::vector<int> A{ 0,9,6,3,8,5,2,7,4,1,0 };
     std::make_heap(A.begin() + 1, A.end());
     max_heap_insert(A, A.size() - 1, 6);
-    for (auto i = 1; i < A.size() - 1; ++i)
+    for (auto i = 1; i < A.size(); ++i)
         std::cout << A[i] << ' ';
     return 0;
 }
