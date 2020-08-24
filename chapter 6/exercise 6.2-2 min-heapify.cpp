@@ -15,7 +15,7 @@ void min_heapify(std::vector<T>& A, const int h_size, const size_t i)
     if (r <= h_size && A[r] < A[smallest])
         smallest = r;
 
-    if (largest != i)
+    if (smallest != i)
     {
         std::swap(A[i], A[smallest]);
         max_heapify(A, h_size, smallest);
