@@ -37,7 +37,7 @@ ans_type find_max_crossing_subarray(const std::vector<T>& A, const size_t low, c
 template <typename T>
 ans_type find_maximum_subarray(const std::vector<T>& A, const size_t low, const size_t high)
 {
-	if (high == low)	// only one element
+	if (high == low)	// base case: only one element
 		return { low, high, A[low] };
 	else {
 		size_t mid = (low + high) / 2;
