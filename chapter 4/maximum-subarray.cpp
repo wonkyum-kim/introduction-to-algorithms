@@ -61,4 +61,4 @@ int main()
 	size_t high = 16;
 	auto arr = find_maximum_subarray(A, low, high);
 	std::cout << std::get<0>(arr) << ' ' << std::get<1>(arr) << ' ' << std::get<2>(arr);
-}
+}	
