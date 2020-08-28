@@ -77,10 +77,64 @@ int main()
 }
 
 /*
+#include <iostream>
+#include <vector>
 
-pair(0,1) pair(0,2) pair(0,3) pair(0,4)
-pair(1,3)
-pair(2,3)
+template<typename T>
+int merge(std::vector<T>& A, const size_t p, const size_t q, const size_t r)
+{
+	size_t n1 = q - p + 1;
+	size_t n2 = r - q;
+	int count = 0;
+	std::vector<T> L, R;
 
-fail...
+	// sentinel value
+	L.push_back(0);
+	R.push_back(0);
+
+	for (auto i = 1; i <= n1; ++i) {
+		L.push_back(A[p + i - 1]);
+	}
+
+	for (auto j = 1; j <= n2; ++j) {
+		R.push_back(A[q + j]);
+	}
+
+	size_t i = 1;
+	size_t j = 1;
+
+	for (auto k = p; k <= r; ++k) {
+		if (L[i] < R[i] || j == n2 + 1) {
+			A[k] = L[i++];
+		}
+		else {
+			A[k] = R[j++];
+			count++;
+		}
+	}
+	return count;
+}
+
+template<typename T>
+int merge_sort(std::vector<T>& A, const size_t p, const size_t r)
+{
+	if (p < r) {
+		size_t q = (p + r) / 2;
+		int count = 0;
+		count += merge_sort(A, p, q);
+		count += merge_sort(A, q + 1, r);
+		count += merge(A, p, q, r);
+		return count;
+	}
+	return 0;
+}
+
+int main()
+{
+	std::vector<int> A{ 0,5,2,4,1,3 };
+	std::cout << merge_sort(A,1,5);
+	return 0;
+
+}
 */
+
