@@ -7,7 +7,7 @@ struct LCRS_binary_tree_node {
 	std::unique_ptr<LCRS_binary_tree_node<T>> left_child;
 	std::unique_ptr<LCRS_binary_tree_node<T>> right_sibling;
 
-	LCRS_binary_tree_node(const T key) : key{key} {}
+	LCRS_binary_tree_node(const T key) : key{ key } {}
 };
 
 template<typename T>
@@ -16,13 +16,15 @@ struct LCRS_binary_tree {
 };
 
 template<typename T>
-std::ostream& operator<< (std::ostream& os, const LCRS_binary_tree_node<T>* node) 
+std::ostream& operator<< (std::ostream& os, const LCRS_binary_tree_node<T>* node)
 {
-	// TBD...
 	if (node) {
 		os << node->key << ' ';
-		os << node->right_sibling.get();
-		os << node->left_child.get();
+		auto x = node->left_child.get();
+		while (x) {
+			os << x;
+			x = x->right_sibling.get();
+		}
 	}
 	return os;
 }
@@ -48,15 +50,15 @@ int main()
 	auto node9 = std::make_unique<LCRS_binary_tree_node<int>>(9);
 
 	/*
-	              1
-                 /
-                /
-               /
-              2---3---4
-             /       /
-            5---6   7
-                   /
-                  8---9
+			      1
+			     /
+			    /
+			   /
+			  2---3---4
+			 /       /
+			5---6   7
+				   /
+				  8---9
 	*/
 
 	tree.root = std::move(node1);
