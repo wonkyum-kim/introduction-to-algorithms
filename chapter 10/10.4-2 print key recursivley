@@ -1,14 +1,13 @@
-#include <cassert>
 #include <iostream>
 #include <memory>
 
 template<typename T>
 struct Binary_tree_node {
-  T key;
-  std::unique_ptr<Binary_tree_node<T>> left;
-  std::unique_ptr<Binary_tree_node<T>> right;
-  
-  Binary_tree_node(const T key) : key{key} {}
+    T key;
+    std::unique_ptr<Binary_tree_node<T>> left;
+    std::unique_ptr<Binary_tree_node<T>> right;
+
+    Binary_tree_node(const T key) : key{ key } {}
 };
 
 template<typename T>
@@ -17,9 +16,9 @@ struct Binary_tree {
 };
 
 template<typename T>
-std::ostream& operator<<(std::ostream& os, Binary_tree_node<T>* node) 
+std::ostream& operator<<(std::ostream& os, Binary_tree_node<T>* node)
 {
-    if(node) {
+    if (node) {
         os << node->left.get();
         os << node->key << ' ';
         os << node->right.get();
@@ -34,22 +33,21 @@ std::ostream& operator<<(std::ostream& os, const Binary_tree<T>& tree)
     return os;
 }
 
-int main() 
+int main()
 {
     Binary_tree<int> t;
-    auto n1 = std::make_unique<Binary_tree_node<int>>(1);
-    auto n2 = std::make_unique<Binary_tree_node<int>>(2);
-    auto n3 = std::make_unique<Binary_tree_node<int>>(3);
-    auto n4 = std::make_unique<Binary_tree_node<int>>(4);
+    auto n1 = std::make_unique<Binary_tree_node<int>>(6);
+    auto n2 = std::make_unique<Binary_tree_node<int>>(5);
+    auto n3 = std::make_unique<Binary_tree_node<int>>(7);
+    auto n4 = std::make_unique<Binary_tree_node<int>>(2);
     auto n5 = std::make_unique<Binary_tree_node<int>>(5);
-    auto n6 = std::make_unique<Binary_tree_node<int>>(6);
+    auto n6 = std::make_unique<Binary_tree_node<int>>(8);
 
     t.root = std::move(n1);
     t.root->left = std::move(n2);
     t.root->right = std::move(n3);
     t.root->left->left = std::move(n4);
     t.root->left->right = std::move(n5);
-    t.root->right->left = std::move(n6);
+    t.root->right->right = std::move(n6);
     std::cout << t;
-
 }
