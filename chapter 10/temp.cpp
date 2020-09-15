@@ -56,9 +56,7 @@ int main()
 
     make_left_child(node1, node2);
     make_right_child(node1, node3);
-    /* 
-    make_left_child(node2, node4);
-    make_right_child(node2, node5);
-    */
+    make_left_child(node1.get()->left, node4);
+    make_right_child(node1.get()->right, node5);
     inorder_traverse(node1);
 }
