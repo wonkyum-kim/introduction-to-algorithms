@@ -34,7 +34,7 @@ void max_heapify_iterative(std::vector<T>& A, int h_size)
             largest = r;
     }
     
-    if(largest != )
+    if(largest != i)
     {
         std::swap(A[largest], A[i]);
         i = largest;
