@@ -33,9 +33,12 @@ template<typename T>
 void inorder_traverse(LCRS_binary_tree_node<T>* node)
 {
     if (node) {
-        inorder_traverse(node->left_child.get());
         std::cout << node->key << ' ';
-        inorder_traverse(node->right_sibling.get());
+        auto x = node->left_child.get();
+        while (x) {
+            inorder_traverse(x);
+            x = x->right_sibling.get();
+        }
     }
 }
 
@@ -81,6 +84,6 @@ int main()
     // level 3
     make_left_child(node1.get()->left_child->right_sibling->right_sibling->left_child, node8);
     make_right_sibling(node1.get()->left_child->right_sibling->right_sibling->left_child->left_child, node9);
-    // 5 6 2 3 8 9 7 4 1
+    // 1 2 5 6 3 4 7 8 9
     inorder_traverse(node1);
 }
