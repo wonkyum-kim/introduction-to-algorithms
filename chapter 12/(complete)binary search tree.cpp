@@ -142,23 +142,26 @@ void tree_delete(std::unique_ptr<Binary_search_tree_node<T>>& root, Binary_searc
         transplant(root, z, std::move(z->left));
     }
     else {
-        // To find a successor key of z, I can't use the fuction, tree_minimum.
-        auto s = z->right.get();
         std::unique_ptr<Binary_search_tree_node<T>> y;
-        if (s->left.get()) {
-            while (s->left.get()) {
-                s = s->left.get();
-            }
+        auto s = tree_successor(z);
+        /*
+         * Third case : s node is not a right child of z node.
+         * Set y to a successor of node z.
+         */
+        if (s->parent != z) {
             y = std::move(s->parent->left);
+            transplant(root, y.get(), std::move(y.get()->right));
+            y.get()->right = std::move(z->right);
+            y.get()->parent = y.get();
         }
+        /*
+         * Fourth case : s node is a right child of z node.
+         * Set y to a successor of node z.
+         */
         else {
             y = std::move(z->right);
         }
-        if (y->parent != z) {
-            transplant(root, y.get(), std::move(y.get()->right));
-            y.get()->right = std::move(z->right);
-            y.get()->parent->parent = y.get();
-        }
+        // Link z with y.
         auto temp = y.get();
         transplant(root, z, std::move(y));
         temp->left = std::move(z->left);
