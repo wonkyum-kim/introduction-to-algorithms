@@ -12,6 +12,13 @@ struct Binary_search_tree_node {
     Binary_search_tree_node(const T& key) : key{ key }, parent{ nullptr } {}
 };
 
+template<typename T>
+std::unique_ptr<Binary_search_tree_node<T>> make_node(T key)
+{
+    auto node = std::make_unique<Binary_search_tree_node<int>>(key);
+    return node;
+}
+
 // recursive version
 template<typename T>
 Binary_search_tree_node<T>* tree_search(Binary_search_tree_node<T>* x, const T& k)
@@ -26,27 +33,6 @@ Binary_search_tree_node<T>* tree_search(Binary_search_tree_node<T>* x, const T& 
         return tree_search(x->right.get(), k);
     }
 }
-
-
-/*
-// iterative version
-template<typename T>
-Binary_search_tree_node<T>* tree_search(const Binary_search_tree_node<T>* x, const T& k)
-{
-    while (x && k != x->key) {
-        if (k < x->key) {
-            x = x->left.get();
-        }
-        else {
-            x = x->right.get();
-        }
-    }
-    return x;
-}
-*/
-
-//-------------------------------------------------------------
-
 
 template<typename T>
 Binary_search_tree_node<T>* tree_minimum(Binary_search_tree_node<T>* x)
@@ -66,8 +52,6 @@ Binary_search_tree_node<T>* tree_maximum(Binary_search_tree_node<T>* x)
     return x;
 }
 
-//-------------------------------------------------------------
-
 template<typename T>
 Binary_search_tree_node<T>* tree_successor(Binary_search_tree_node<T>* x)
 {
@@ -85,7 +69,7 @@ Binary_search_tree_node<T>* tree_successor(Binary_search_tree_node<T>* x)
 template<typename T>
 Binary_search_tree_node<T>* tree_predecessor(Binary_search_tree_node<T>* x)
 {
-    if (x->left) {
+    if (x->left.get()) {
         return tree_maximum(x->left.get());
     }
     auto y = x->parent;
@@ -96,16 +80,15 @@ Binary_search_tree_node<T>* tree_predecessor(Binary_search_tree_node<T>* x)
     return y;
 }
 
-//-------------------------------------------------------------
-
 template<typename T>
-void tree_insert(std::unique_ptr<Binary_search_tree_node<T>>& root, std::unique_ptr<Binary_search_tree_node<T>>& z)
+void tree_insert(std::unique_ptr<Binary_search_tree_node<T>>& root, const T& k)
 {
+    auto z = make_node(k);
     Binary_search_tree_node<T>* y = nullptr;
     auto x = root.get();
     while (x) {
         y = x;
-        if (z.get()->key < x->key) {
+        if (k < x->key) {
             x = x->left.get();
         }
         else {
@@ -116,7 +99,7 @@ void tree_insert(std::unique_ptr<Binary_search_tree_node<T>>& root, std::unique_
     if (!y) {
         root = std::move(z);
     }
-    else if (z.get()->key < y->key) {
+    else if (k < y->key) {
         y->left = std::move(z);
     }
     else {
@@ -124,11 +107,12 @@ void tree_insert(std::unique_ptr<Binary_search_tree_node<T>>& root, std::unique_
     }
 }
 
-//-------------------------------------------------------------
-
 template<typename T>
 void transplant(std::unique_ptr<Binary_search_tree_node<T>>& root, Binary_search_tree_node<T>* u, std::unique_ptr<Binary_search_tree_node<T>>&& v)
 {
+    if (v) {
+        v.get()->parent = u->parent;
+    }
     if (!u->parent) {
         root = std::move(v);
     }
@@ -138,43 +122,57 @@ void transplant(std::unique_ptr<Binary_search_tree_node<T>>& root, Binary_search
     else {
         u->parent->right = std::move(v);
     }
-    if (v) {
-        v.get()->parent = u->parent;
-    }
 }
 
-// not to use now...
 template<typename T>
 void tree_delete(std::unique_ptr<Binary_search_tree_node<T>>& root, Binary_search_tree_node<T>* z)
 {
+    /* 
+     * First case : z doesn't have a left child.
+     * Transplant z->right node to the place of z node.
+     */
     if (!z->left.get()) {
         transplant(root, z, std::move(z->right));
     }
+    /*
+     * Second case : z doesn't have a right child.
+     * Transplant z->left node to the place of z node.
+     */
     else if (!z->right.get()) {
         transplant(root, z, std::move(z->left));
     }
     else {
-        auto y = tree_minimum(z->right.get());
-        if (y->parent != z) {
-            transplant(root, y, std::move(y->right));
-            y->right = std::move(z->right);
-            y->right->parent = y;
+        // To find a successor key of z, I can't use the fuction, tree_minimum.
+        auto s = z->right.get();
+        std::unique_ptr<Binary_search_tree_node<T>> y;
+        if (s->left.get()) {
+            while (s->left.get()) {
+                s = s->left.get();
+            }
+            y = std::move(s->parent->left);
         }
-        transplant(root, z, y);
-        y->left = std::move(z->left);
-        y->left.get()->parent = y;
+        else {
+            y = std::move(z->right);
+        }
+        if (y->parent != z) {
+            transplant(root, y.get(), std::move(y.get()->right));
+            y.get()->right = std::move(z->right);
+            y.get()->parent->parent = y.get();
+        }
+        auto temp = y.get();
+        transplant(root, z, std::move(y));
+        temp->left = std::move(z->left);
+        temp->left.get()->parent = y.get();
+
     }
 }
 
-//-------------------------------------------------------------
-
 template<typename T>
-std::unique_ptr<Binary_search_tree_node<T>> make_binary_search_tree_node(T key)
+void tree_delete(std::unique_ptr<Binary_search_tree_node<T>>& root, const T& k)
 {
-    auto node = std::make_unique<Binary_search_tree_node<int>>(key);
-    return node;
+    auto z = tree_search(root.get(),k);
+    tree_delete(root, z);
 }
-
 
 template<typename T>
 void inorder_traverse(Binary_search_tree_node<T>* node)
@@ -192,30 +190,33 @@ void inorder_traverse(std::unique_ptr<Binary_search_tree_node<T>>& node)
     inorder_traverse(node.get());
 }
 
-
 int main()
 {
-    auto node1 = make_binary_search_tree_node(15);
-    auto node2 = make_binary_search_tree_node(6);
-    auto node3 = make_binary_search_tree_node(18);
-    auto node4 = make_binary_search_tree_node(3);
-    auto node5 = make_binary_search_tree_node(7);
+    auto root = make_node(15);
+    tree_insert(root, 6);
+    tree_insert(root, 3);
+    tree_insert(root, 7);
+    tree_insert(root, 18);
 
-    tree_insert(node1, node2);
-    tree_insert(node1, node3);
-    tree_insert(node1, node4);
-    tree_insert(node1, node5);
-
-    std::cout << "inorder traverse " << '\n';
-    inorder_traverse(node1);
-
+    inorder_traverse(root);
     std::cout << '\n';
 
-    auto find1 = tree_search(node1.get(), 7);
-    if (find1) {
-        std::cout << "success to find a key : " << find1->key << '\n';
+    auto search = tree_search(root.get(), 15);
+    if (search) {
+        std::cout << search->key << " is founded in the binary search tree\n";
     }
-    else {
-        std::cout << "fail to find a key" << '\n';
-    }    
+
+    auto min = tree_minimum(root.get());
+    if (min) {
+        std::cout << min->key << " is minium value in the binary search tree\n";
+    }
+
+    auto max = tree_maximum(root.get());
+    if (max) {
+        std::cout << max->key << " is maximum value in the binary search tree\n";
+    }
+
+    tree_delete(root, 18);
+    tree_delete(root, 7);
+    inorder_traverse(root);
 }
