@@ -5,7 +5,7 @@
 #include <numeric>
 
 template<typename T>
-std::pair<std::vector<T>, std::vector<T>> LCS_length(const std::vector<T>& X, const std::vector<T>& Y)
+std::pair<std::vector<std::vector<T>>, std::vector<std::vector<T>>> LCS_length(const std::vector<T>& X, const std::vector<T>& Y)
 {
 	auto m = X.size() - 1;
 	auto n = Y.size() - 1;
@@ -15,15 +15,15 @@ std::pair<std::vector<T>, std::vector<T>> LCS_length(const std::vector<T>& X, co
 		for (auto j = 1; j <= n; ++j) {
 			if (X[i] == Y[j]) {
 				c[i][j] = c[i - 1][j - 1] + 1;
-				b[i][j] = '↖';
+				b[i][j] = 'a';
 			}
 			else if (c[i - 1][j] >= c[i][j - 1]) {
 				c[i][j] = c[i - 1][j];
-				b[i][j] = '↑';
+				b[i][j] = 'b';
 			}
 			else {
 				c[i][j] = c[i][j - 1];
-				b[i][j] = '←';
+				b[i][j] = 'c';
 			}
 		}
 	}
@@ -36,11 +36,11 @@ void print_LCS(const std::vector<std::vector<char>>& b, const std::vector<T>& X,
 	if (i == 0 || j == 0) {
 		return;
 	}
-	if (b[i][j] == '↖') {
+	if (b[i][j] == 'a') {
 		print_LCS(b, X, i - 1, j - 1);
 		std::cout << X[i] << ' ';
 	}
-	else if (b[i][j] == '↑') {
+	else if (b[i][j] == 'b') {
 		print_LCS(b, X, i - 1, j);
 	}
 	else {
@@ -53,6 +53,6 @@ int main()
 	char dummy = '?';
 	std::vector<char> X{ dummy,'A','B','C','B','D','A','B' };
 	std::vector<char> Y{ dummy,'B','D','C','A','B','A' };
-	auto [b,c] = LCS_length(X, Y);
+	auto [b, c] = LCS_length(X, Y);
 	print_LCS(b, X, X.size() - 1, Y.size() - 1);
 }
