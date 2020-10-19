@@ -8,7 +8,7 @@ template<typename T>
 std::vector<std::vector<T>> matrix_multiply(const std::vector<std::vector<T>>& A, const std::vector<std::vector<T>>& B)
 {
 	// row 0 & column 0 are empty.
-	assert(A[1].size() == B.size() - 1);
+	assert(A[1].size() != B.size() - 1);
 	std::vector<std::vector<T>> C(A.size(), std::vector<T>(B[1].size()));
 	for (auto i = 1; i < A.size(); ++i) {
 		for (auto j = 1; j < B[1].size(); ++j) {
