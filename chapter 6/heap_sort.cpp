@@ -2,7 +2,7 @@
 #include<vector>
 #include<algorithm>
 
-// the index of root node is 1.
+// the index of the root node is 1.
 int parent(int i)
 {
     return i / 2;
@@ -47,13 +47,14 @@ void build_max_heap(std::vector<T>& A, const int h_size)
 }
 
 template<typename T>
-void heap_sort(std::vector<T>& A, int h_size)
+void heap_sort(std::vector<T>& A)
 {
-    build_max_heap(A, h_size);
-    for (size_t i = h_size; i > 1; --i)
+    auto A_length = A.size() - 1;
+    build_max_heap(A, A_length);
+    for (auto i = A_length; i >= 2; --i)
     {
         std::swap(A[1], A[i]);
-        max_heapify(A, --h_size, 1);
+        max_heapify(A, --A_length, 1);
     }
 }
 
@@ -61,7 +62,7 @@ int main()
 {
     constexpr int dummy = 0;
     std::vector<int> A{ dummy,9,6,3,8,5,2,7,4,1,0 };
-    heap_sort(A, A.size() - 1);     // A.size() - 1 is h_size
+    heap_sort(A);    
     for (int i = 1; i < A.size(); i++)
         std::cout << A[i] << " ";
     return 0;
