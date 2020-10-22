@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
+#include<cassert>
 
 // the index of the root node is 1.
 int parent(int i)
@@ -20,7 +21,7 @@ int right(int i)
 
 
 template<typename T>
-void max_heapify(std::vector<T>& A, const int h_size, const size_t i)
+void max_heapify(std::vector<T>& A, int h_size, size_t i)
 {
     size_t l = left(i);
     size_t r = right(i);
@@ -40,7 +41,7 @@ void max_heapify(std::vector<T>& A, const int h_size, const size_t i)
 }
 
 template<typename T>
-void build_max_heap(std::vector<T>& A, const int h_size)
+void build_max_heap(std::vector<T>& A, int h_size)
 {
     for (size_t i = h_size / 2; i > 0; --i)
         max_heapify(A, h_size, i);
@@ -58,12 +59,49 @@ void heap_sort(std::vector<T>& A)
     }
 }
 
+template<typename T>
+T heap_maximum(const std::vector<T>& A)
+{
+    return A[1];
+}
+
+template<typename T>
+T heap_extract_max(std::vector<T>& A, int h_size)
+{
+    assert(h_size < 1, "heap underflow");
+    T max = A[1];
+    A[1] = A[h_size];
+    max_heapify(A, --h_size, 1);
+    return max;
+}
+
+template<typename T>
+void heap_increase_key(std::vector<T>& A, size_t i, const T key)
+{
+    assert(key < A[i], "new key is smaller than current key");
+    A[i] = key;
+    while (i > 1 && A[parent(i)] < A[i])
+    {
+        std::swap(A[i], A[parent(i)]);
+        i = parent(i);
+    }
+}
+
+template<typename T>
+void max_heap_insert(std::vector<T>& A, int h_size, T key)
+{
+    h_size++;
+    A.push_back(std::numeric_limits<T>::min());
+    heap_increase_key(A, h_size, key);
+}
+
+
 int main()
 {
     constexpr int dummy = 0;
     std::vector<int> A{ dummy,9,6,3,8,5,2,7,4,1,0 };
-    heap_sort(A);    
-    for (int i = 1; i < A.size(); i++)
-        std::cout << A[i] << " ";
+    build_max_heap(A, A.size() - 1);
+    for (auto i = 1; i < A.size(); ++i)
+        std::cout << A[i] << ' ';
     return 0;
 }
