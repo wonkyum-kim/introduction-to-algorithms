@@ -59,43 +59,6 @@ void heap_sort(std::vector<T>& A)
     }
 }
 
-template<typename T>
-T heap_maximum(const std::vector<T>& A)
-{
-    return A[1];
-}
-
-template<typename T>
-T heap_extract_max(std::vector<T>& A, int h_size)
-{
-    assert(h_size < 1, "heap underflow");
-    T max = A[1];
-    A[1] = A[h_size];
-    max_heapify(A, --h_size, 1);
-    return max;
-}
-
-template<typename T>
-void heap_increase_key(std::vector<T>& A, size_t i, const T key)
-{
-    assert(key < A[i], "new key is smaller than current key");
-    A[i] = key;
-    while (i > 1 && A[parent(i)] < A[i])
-    {
-        std::swap(A[i], A[parent(i)]);
-        i = parent(i);
-    }
-}
-
-template<typename T>
-void max_heap_insert(std::vector<T>& A, int h_size, T key)
-{
-    h_size++;
-    A.push_back(std::numeric_limits<T>::min());
-    heap_increase_key(A, h_size, key);
-}
-
-
 int main()
 {
     constexpr int dummy = 0;
