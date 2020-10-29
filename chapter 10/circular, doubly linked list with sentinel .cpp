@@ -3,61 +3,66 @@
 #include <memory>
 
 template<typename T>
-struct List_node {
-    T key;
-    std::shared_ptr<List_node<T>> next;
-    std::weak_ptr<List_node<T>> prev;
-    List_node(const T key) : key{key} {}
+struct Node {
+	T data;
+	std::shared_ptr<Node<T>> next;
+	std::weak_ptr<Node<T>> prev;
+	Node(const T data) : data{data} {}
 };
 
 template<typename T>
 class List {
 private:
-    std::shared_ptr<List_node<T>> nil;
+	std::shared_ptr<Node<T>> nil;
 public:
-    List()
-    {
-        nil = std::make_shared<List_node<T>>(T());
-        nil->next = nil;
-        nil->prev = nil;
-    }
+	List() {
+		nil = std::make_shared<Node<T>>(T());
+		nil->next = nil;
+		nil->prev = nil;
+	}
 
-    void list_delete(std::shared_ptr<List_node<T>>& x)
-    {
-        x->prev.lock()->next = x->next;
-        x->next->prev = x->prev;
-        x.reset();
-    }
+	std::shared_ptr<Node<T>> search(const T k) {
+		auto x = nil->next;
+		while (x != nil && x->data != k) {
+			x = x->next;
+		}
+		if (x == nil) {
+			return nullptr;
+		}
+		return x;
+	}
 
-    std::shared_ptr<List_node<T>> list_search(const T k)
-    {
-        auto x = nil->next;
-        while (x != nil && x->key != k)
-            x = x->next;
-        if (x == nil)
-            return nullptr;
-        return x;
-    }
+	void pop(std::shared_ptr<Node<T>>& x) {
+		x->prev.lock()->next = x->next;
+		x->next->prev = x->prev;
+		x.reset();
+	}
 
-    void list_insert(std::shared_ptr<List_node<T>>& x)
-    {
-        x->next = nil->next;
-        nil->next->prev = x;
-        nil->next = x;
-        x->prev = nil;
-    }
+	void pop(const T k) {
+		std::shared_ptr<Node<T>> x = search(k);
+		if (x) {
+			pop(x);
+		}
+	}
+
+	void push(const T k) {
+		auto x = std::make_shared<Node<T>>(k);
+		push(x);
+	}
+
+	void push(std::shared_ptr<Node<T>>& x) {
+		x->next = nil->next;
+		nil->next->prev = x;
+		nil->next = x;
+		x->prev = nil;
+	}
 };
 
 int main()
 {
-    auto x1 = std::make_shared<List_node<int>>(1);
-    auto x2 = std::make_shared<List_node<int>>(2);
-    auto x3 = std::make_shared<List_node<int>>(3);
-
-    List<int> l;
-
-    l.list_insert(x1);
-    l.list_insert(x2);
-    l.list_insert(x3);
-    l.list_delete(x2);
+	List<int> l;
+	l.push(1);
+	l.push(2);
+	l.push(3);
+	l.pop(2);
 }
