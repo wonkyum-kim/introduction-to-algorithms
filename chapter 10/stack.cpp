@@ -1,50 +1,61 @@
 #include <iostream>
-#include <array>
-#include <stdexcept>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <cassert>
 
+constexpr int dummy = 0;
 
-template<typename T, size_t N>
+template<typename T>
 struct Stack {
-	std::array<T, N> data;
-	int top;
+	//--------------------------------
 
-	Stack(int t) : data{}, top{ t }	{};
+	std::vector<T> data;
+	int top = 0;
+
+	//--------------------------------
+
+	Stack() : data{dummy}, top{} {};
 	bool stack_empty();
 	void push(const T x);
 	T pop();
+
+	//--------------------------------
 };
 
-template<typename T, size_t N>
-bool Stack<T, N>::stack_empty()
+template<typename T>
+bool Stack<T>::stack_empty()
 {
-	if (top == -1)
+	if (top == 0) {
 		return true;
-	else
+	}
+	else {
 		return false;
+	}
 }
 
-template<typename T, size_t N>
-void Stack<T, N>::push(const T x)
+template<typename T>
+void Stack<T>::push(const T x)
 {
-	data[++top] = x;
+	top++;
+	data.push_back(x);
 }
 
-template<typename T, size_t N>
-T Stack<T, N>::pop()
+template<typename T>
+T Stack<T>::pop()
 {
-	if (stack_empty())
-		throw std::underflow_error("stack underflow");
-	else
-		return data[top--];
+	assert(!stack_empty(), "stack underflow");
+	return data[top--];
 }
 
 int main()
 {
-	Stack<int, 50> s(-1);
-	s.push(1);	// top == 0
-	s.push(2);	// top == 1
-	s.push(3);	// top == 2
-	s.push(4);	// top == 3
-	s.push(5);	// top == 4
+	Stack<int> s;
+	s.push(1);	// top == 1
+	s.push(2);	// top == 2
+	s.push(3);	// top == 3
+	s.push(4);	// top == 4
+	s.push(5);	// top == 5
 	std::cout << s.pop() << s.pop() << s.pop() << s.pop() << s.pop();
+
 }
