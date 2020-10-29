@@ -1,45 +1,50 @@
 #include <iostream>
-#include <array>
-#include <stdexcept>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <cassert>
 
-template<typename T, size_t N>
+constexpr int dummy = 0;
+
+template<typename T>
 struct Queue {
-	std::array<T, N> data;
+	//--------------------------------
+
+	std::vector<T> data;
 	int head;
 	int tail;
 
-	Queue(int h, int t) : data{}, head{ h }, tail{ t }	{};
+	//--------------------------------
+
+	Queue() : data{ dummy }, head{1}, tail{1} {};
 	void enqueue(const T x);
 	T dequeue();
+
+	//--------------------------------
 };
 
-template<typename T, size_t N>
-void Queue<T, N>::enqueue(const T x)
+template<typename T>
+void Queue<T>::enqueue(const T x)
 {
-	data[tail] = x;
-	if (tail == data.size() - 1)
-		tail = 0;
-	else
-		tail++;
+	data.push_back(x);
+	tail++;
 }
 
-template<typename T, size_t N>
-T Queue<T, N>::dequeue()
+template<typename T>
+T Queue<T>::dequeue()
 {
 	T x = data[head];
-	if (head == data.size() - 1)
-		head = 0;
-	else
-		head++;
+	head++;
 	return x;
 }
 
 int main()
 {
-	Queue<int, 50> q(0, 0);
-	q.enqueue(0);
+	Queue<int> q;
 	q.enqueue(1);
 	q.enqueue(2);
 	q.enqueue(3);
-	std::cout << q.dequeue() << q.dequeue() << q.dequeue() << q.dequeue();
+	q.enqueue(4);
+	q.enqueue(5);
+	std::cout << q.dequeue() << q.dequeue() << q.dequeue();
 }
