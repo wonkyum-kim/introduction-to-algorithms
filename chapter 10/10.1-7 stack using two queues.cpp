@@ -6,7 +6,6 @@ template<typename T>
 struct Stack {
 	std::queue<T> A;
 	std::queue<T> B;
-
 	Stack() : A{}, B{}	{};
 	void push(const T x);
 	T pop();
