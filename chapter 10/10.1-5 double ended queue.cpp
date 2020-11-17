@@ -4,13 +4,13 @@
 #include <cassert>
 
 template<typename T>
-class Circular_Deque {
+class Deque {
 private:
     std::vector<T> data;
     size_t size;
 
 public:
-    Circular_Deque(int k) : 
+    Deque(int k) : 
         size(k) {}
 
     void push_front(T value) {
