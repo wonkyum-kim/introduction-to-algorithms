@@ -1,19 +1,56 @@
+#include <vector>
 #include <iostream>
-#include <stack>
+#include <algorithm>
+#include <memory>
+#include <cassert>
+
+template<typename T>
+class Stack {
+private:
+	std::unique_ptr<T[]> data;
+	size_t size;
+	size_t t;
+
+public:
+	Stack(size_t k) :
+		data(std::make_unique<T[]>(k)),
+		size(k),
+		t(0) {}
+
+	bool is_empty() {
+		return t == 0;
+	}
+
+	bool is_full() {
+		return t == size;
+	}
+
+	void push(T x) {
+		assert(!is_full());
+		auto p = data.get() + t;
+		*p = x;
+		t++;
+	}
+
+	void pop() {
+		assert(!is_empty());
+		t--;
+	}
+
+	T top() {
+		assert(!is_empty());
+		auto p = data.get() + t - 1;
+		return *p;
+	}
+};
 
 int main()
 {
-    std::stack<int> S;
-    S.push(4);
-    std::cout << S.top() << '\n';
-    S.push(1);
-    std::cout << S.top() << '\n';
-    S.push(3);
-    std::cout << S.top() << '\n';
-    S.pop();
-    std::cout << S.top() << '\n';
-    S.push(8);
-    std::cout << S.top() << '\n';
-    S.pop();
-    std::cout << S.top() << '\n';
+	Stack<int> s(6);
+	s.push(4);
+	s.push(1);
+	s.push(3);
+	s.pop();
+	s.push(8);
+	s.pop();
 }
