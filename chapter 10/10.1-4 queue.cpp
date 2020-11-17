@@ -1,48 +1,89 @@
-#include <iostream> 
-#include <array> 
-#include <stdexcept> 
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <memory>
+#include <cassert>
 
-template<typename T, size_t N> 
-struct Queue {
- 	std::array<T, N> data;
- 	int head;
- 	int tail;
- 	Queue() : data{}, head{ 0 }, tail{ 0 }	{};
- 	void enqueue(const T x);
- 	T dequeue(); 
-}; 
 
-template<typename T, size_t N> 
-void Queue<T, N>::enqueue(const T x) 
-{
-        if (head == tail + 1 || (head == 0 && tail == data.size() - 1))
-                throw std::overflow_error ("queue overflow");
- 	data[tail] = x;
- 	if (tail == data.size() - 1)
- 		tail = 0;
- 	else
- 		tail++;
-}
+template<typename T>
+class Circular_Queue {
+private:
+    using pointer = T*;
+    std::unique_ptr<T[]> data;
+    const size_t size;
+    pointer head;
+    pointer tail;
 
-template<typename T, size_t N> 
-T Queue<T, N>::dequeue() 
-{
-        if (head == tail)
-                throw std::underflow_error ("queue underflow");
- 	T x = data[head];
- 	if (head == data.size() - 1)
- 		head = 0;
- 	else
- 		head++;
- 	return x; 
-}
+    pointer prev(pointer p) const {
+        // p가 맨 앞의 원소를 가리킨다면
+        if (p == data.get()) {
+            return data.get() + size - 1;
+        }
+        return p - 1;
+    }
+
+    pointer next(pointer p) const {
+        // p가 맨 뒤의 원소를 가리킨다면
+        if (p == data.get() + size - 1) {
+            return data.get();
+        }
+        return p + 1;
+    }
+public:
+    Circular_Queue(size_t k)
+        : data(std::make_unique<T[]>(k)),
+        size(k),
+        head(data.get()),
+        tail(data.get()) {}
+
+    void push(const T value) {
+        assert(!is_full(), "queue overflow");
+        *tail = value;
+        tail = next(tail);
+        if (tail == head) {
+            tail = nullptr;
+        }
+    }
+
+    void pop() {
+        assert(!is_empty(), "queue underflow");
+        if (is_full()) {
+            tail = head;
+        }
+        head = next(head);
+    }
+
+    T front() {
+        assert(!is_empty(), "empty");
+        return *head;
+    }
+
+    T back() {
+        assert(!is_empty(), "empty");
+        return *prev(tail);
+    }
+
+    bool is_empty() {
+        return head == tail;
+    }
+
+    bool is_full() {
+        return tail == nullptr;
+    }
+ };
+
 
 int main()
 {
- 	Queue<int, 50> q;
- 	q.enqueue(0);
- 	q.enqueue(1);
- 	q.enqueue(2);
- 	q.enqueue(3);
- 	std::cout << q.dequeue() << q.dequeue() << q.dequeue() << q.dequeue(); // 0123
+    Circular_Queue<int> cq(6);
+    cq.push(4);
+    cq.push(1);
+    cq.push(3);
+    cq.pop();
+    cq.push(8);
+    cq.pop();
+    while (!cq.is_empty()) {
+        std::cout << cq.front() << ' ';
+        cq.pop();
+    }
 }
