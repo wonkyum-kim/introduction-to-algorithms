@@ -47,7 +47,7 @@ public:
 		}
 	}
 
-	void inorer_tree_walk() {
+	void inorder_tree_walk() {
 		inorder_tree_walk(root.get());
 	}
 
@@ -169,18 +169,18 @@ int main()
 	if (bst.iterative_tree_search(30)) {
 		std::cout << "iterative_tree_search is okay" << '\n';
 	}
-	bst.inorer_tree_walk();
+	bst.inorder_tree_walk();
 	bst.tree_delete(10);
 	std::cout << '\n';
-	bst.inorer_tree_walk();
+	bst.inorder_tree_walk();
 	bst.tree_delete(40);
 	std::cout << '\n';
-	bst.inorer_tree_walk();
+	bst.inorder_tree_walk();
 	bst.tree_delete(20);
 	std::cout << '\n';
-	bst.inorer_tree_walk();
+	bst.inorder_tree_walk();
 	bst.tree_delete(30);
 	std::cout << '\n';
-	bst.inorer_tree_walk();
+	bst.inorder_tree_walk();
 
 }
