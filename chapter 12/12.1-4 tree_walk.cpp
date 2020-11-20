@@ -7,21 +7,28 @@ class BST {
 private:
 	struct Node {
 		T key;
+		Node* parent;
 		std::unique_ptr<Node> left;
 		std::unique_ptr<Node> right;
 		Node(const T& k) :
-			key{ k }, left{ nullptr }, right{ nullptr } {}
+			key{ k }, parent{ nullptr }, left{ nullptr }, right{ nullptr } {}
 	};
 public:
+	//------------------------------------------------------
+
 	std::unique_ptr<Node> root = nullptr;
 
-	bool tree_search(const T& k) {
+	//------------------------------------------------------
+
+	Node* tree_search(const T& k) {
 		return tree_search(root.get(), k);
 	}
 
-	bool iterative_tree_search(const T& k) {
+	Node* iterative_tree_search(const T& k) {
 		return iterative_tree_search(root.get(), k);
 	}
+
+	//------------------------------------------------------
 
 	void tree_insert(const T& k) {
 		auto z = std::make_unique<Node>(k);
@@ -40,12 +47,16 @@ public:
 			root = std::move(z);
 		}
 		else if (k < y->key) {
+			z->parent = y;
 			y->left = std::move(z);
 		}
 		else {
+			z->parent = y;
 			y->right = std::move(z);
 		}
 	}
+
+	//------------------------------------------------------
 
 	void preorder_tree_walk() {
 		preorder_tree_walk(root.get());
@@ -59,26 +70,27 @@ public:
 		postorder_tree_walk(root.get());
 	}
 
-	void iterative_inorder_tree_walk() {
-		iterative_inorder_tree_walk(root);
+	//------------------------------------------------------
+
+	void tree_delete(const T& k) {
+		auto z = tree_search(k);
+		tree_delete(z);
 	}
 
-	bool tree_delete(const T& k) {
-		if (iterative_tree_search(k)) {
-			return tree_delete(root, k);
-		}
-		else {
-			return false;
-		}
-	}
+	//------------------------------------------------------
 
 private:
-	bool tree_search(Node* x, const T& k) {
+
+	//------------------------------------------------------
+
+	/* recursive version */
+
+	Node* tree_search(Node* x, const T& k) {
 		if (!x) {
-			return false;
+			return x;
 		}
 		if (k == x->key) {
-			return true;
+			return x;
 		}
 		else if (k < x->key) {
 			return tree_search(x->left.get(), k);
@@ -88,7 +100,9 @@ private:
 		}
 	}
 
-	bool iterative_tree_search(Node* x, const T& k) {
+	/* iterative version */
+
+	Node* iterative_tree_search(Node* x, const T& k) {
 		while (x && k != x->key) {
 			if (k < x->key) {
 				x = x->left.get();
@@ -100,23 +114,25 @@ private:
 		return x;
 	}
 
-	std::unique_ptr<Node>& tree_minimum(std::unique_ptr<Node>& x) {
-		if (!x->left) {
-			return x;
+	//------------------------------------------------------
+
+	/* iterative version */
+
+	Node* tree_minimum(Node* x) {
+		while (x->left) {
+			x = x->left.get();
 		}
-		else {
-			return tree_minimum(x->left);
-		}
+		return x;
 	}
 
-	std::unique_ptr<Node>& tree_maximum(std::unique_ptr<Node>& x) {
-		if (!x->right) {
-			return x;
+	Node* tree_maximum(Node* x) {
+		while (x->right) {
+			x = x->right.get();
 		}
-		else {
-			return tree_maximum(x->right);
-		}
+		return x;
 	}
+
+	//------------------------------------------------------
 
 	void preorder_tree_walk(Node* x) {
 		if (x) {
@@ -142,58 +158,74 @@ private:
 		}
 	}
 
-	bool tree_delete(std::unique_ptr<Node>& z, const T& k) {
-		if (!z) {
-			return false;
+	//------------------------------------------------------
+
+	Node* tree_successor(Node* x) {
+		if (x->right) {
+			return tree_minimum(x->right.get());
 		}
-		else if (z.get()->key == k) {
-			// case 1: z is a leaf
-			if (!z->left && !z->right) {
-				z.reset();
-				return true;
-			}
-			// case 2: z has one child 
-			else if (!z->left || !z->right) {
-				// case 2-1 : z has left child
-				if (!z->right) {
-					z = std::move(z->left);
-				}
-				// case 2-2: z has right child
-				else {
-					z = std::move(z->right);
-				}
-				return true;
-			}
-			// case 3: z has two children
-			else {
-				std::unique_ptr<Node>& swap = tree_maximum(z->left);
-				z->key = swap->key;
-				swap = std::move(swap->left);
-				return true;
-			}
+		Node* y = x->parent;
+		while (y && x == y->right.get()) {
+			x = y;
+			y = y->parent;
+		}
+		return y;
+	}
+
+	//------------------------------------------------------
+
+	void transplant(Node* u, std::unique_ptr<Node>&& v) {
+		if (v) {
+			v->parent = u->parent;
+		}
+		if (!u->parent) {
+			root = std::move(v);
+		}
+		else if (u == u->parent->left.get()) {
+			u->parent->left = std::move(v);
 		}
 		else {
-			if (k > z->key) {
-				return tree_delete(z->right, k);
-			}
-			else {
-				return tree_delete(z->left, k);
-			}
+			u->parent->right = std::move(v);
 		}
 	}
+
+	void tree_delete(Node* z) {
+		// case 1 : z has one child
+		// case 1-1 : z has a right child
+		if (!z->left) {
+			transplant(z, std::move(z->right));
+		}
+		// case 1-2 : z has a left child
+		else if (!z->right) {
+			transplant(z, std::move(z->left));
+		}
+		// case 2 : z has two children
+		else {
+			Node* y = tree_minimum(z->right.get());
+			std::unique_ptr<Node> upy = nullptr;
+			if (y->parent != z) {
+				// disconnect a link between z->right's subtree and y's subtree
+				upy = std::move(y->parent->left);
+				// disconnect a link between y and y->right's subtree
+				std::unique_ptr<Node> x = std::move(upy->right);
+				// link z->right's subtree with x
+				transplant(tree_minimum(z->right.get())->left.get(), std::move(x));
+				// link y with z->right's subtree
+				transplant(upy->right.get(), std::move(z->right));
+			}
+			else {
+				upy = std::move(z->right);
+			}
+			std::unique_ptr<Node> upzl = std::move(z->left);
+			upy->left = std::move(upzl);
+			transplant(z, std::move(upy));
+		}
+	}
+
+	//------------------------------------------------------
 
 };
 
 int main()
 {
-	BST<int> bst;
-	bst.tree_insert(10);
-	bst.tree_insert(40);
-	bst.tree_insert(20);
-	bst.tree_insert(15);
-	bst.preorder_tree_walk();
-	std::cout << '\n';
-	bst.inorder_tree_walk();
-	std::cout << '\n';
-	bst.postorder_tree_walk();
 }
