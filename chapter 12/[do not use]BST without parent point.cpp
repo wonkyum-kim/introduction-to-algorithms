@@ -182,5 +182,4 @@ int main()
 	bst.tree_delete(30);
 	std::cout << '\n';
 	bst.inorder_tree_walk();
-
 }
