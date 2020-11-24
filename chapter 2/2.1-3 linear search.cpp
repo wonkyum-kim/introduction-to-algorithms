@@ -2,11 +2,12 @@
 #include <iostream>
 
 template<typename T>
-int linear_search(std::vector<T>& A, const T key)
+int linear_search(const std::vector<T>& A, const T key)
 {
 	for (size_t i = 0; i < A.size(); ++i) {
-		if (key == A[i])
+		if (key == A[i]) {
 			return i;
+		}
 	}
 	return -1;
 }
