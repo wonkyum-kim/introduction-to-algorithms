@@ -2,19 +2,23 @@
 #include<vector>
 #include<algorithm>
 #include<cassert>
+#include <random>
+#include <numeric>
+
+std::mt19937 gen(std::random_device{}());
 
 // the index of the root node is 1.
-int parent(int i)
+size_t parent(size_t i)
 {
     return i / 2;
 }
 
-int left(int i)
+size_t left(size_t i)
 {
     return 2 * i;
 }
 
-int right(int i)
+size_t right(size_t i)
 {
     return 2 * i + 1;
 }
@@ -61,10 +65,11 @@ void heap_sort(std::vector<T>& A)
 
 int main()
 {
-    constexpr int dummy = 0;
-    std::vector<int> A{ dummy,9,6,3,8,5,2,7,4,1,0 };
-    build_max_heap(A, A.size() - 1);
-    for (auto i = 1; i < A.size(); ++i)
-        std::cout << A[i] << ' ';
-    return 0;
+    std::vector<int> v(101);
+    std::iota(v.begin() + 1, v.end(), 1);
+    std::shuffle(v.begin() + 1, v.end(), gen);
+    heap_sort(v);
+    for (auto x : v) {
+        std::cout << x << ' ';
+    }
 }
