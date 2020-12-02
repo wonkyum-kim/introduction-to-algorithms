@@ -1,6 +1,11 @@
-#include <iostream>
-#include <algorithm>
-#include <vector>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<cassert>
+#include <random>
+#include <numeric>
+
+std::mt19937 gen(std::random_device{}());
 
 template<typename T>
 size_t partition(std::vector<T>& A, size_t p, size_t r)
@@ -27,10 +32,11 @@ void quick_sort(std::vector<T>& A, size_t p, size_t r)
 
 int main()
 {
-	constexpr int dummy = 0;
-	std::vector<int> A{ dummy, 5, 3, 2, 4, 1 };
-	quick_sort(A, 1, A.size() - 1);
-	for (auto i = 1; i < A.size(); ++i) {
-		std::cout << A[i] << ' ';
-	}
+    std::vector<int> v(101);
+    std::iota(v.begin() + 1, v.end(), 1);
+    std::shuffle(v.begin() + 1, v.end(), gen);
+	quick_sort(v, 1, v.size() - 1);
+    for (auto i = 1; i <= 100; ++i) {
+        std::cout << v[i] << ' ';
+    }
 }
