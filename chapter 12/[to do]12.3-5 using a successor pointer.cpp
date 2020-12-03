@@ -31,6 +31,11 @@ public:
 		tree_insert(root.get(), k);
 	}
 
+	void tree_delete(const T& k) {
+		Node* z = tree_search(k);
+		tree_delete(z);
+	}
+
 private:
 
 	void inorder_tree_walk(Node* x) {
@@ -44,6 +49,13 @@ private:
 	Node* tree_maximum(Node* x) {
 		while (x->right) {
 			x = x->right.get();
+		}
+		return x;
+	}
+
+	Node* tree_minimum(Node* x) {
+		while (x->left) {
+			x = x->left.get();
 		}
 		return x;
 	}
@@ -115,10 +127,72 @@ private:
 		}
 	}
 
+	Node* tree_predecessor(Node* x) {
+		if (x->left) {
+			return tree_maximum(x->left.get());
+		}
+		Node* y = root.get();
+		Node* pred = nullptr;
+		while (y) {
+			if (y->key == x->key) {
+				break;
+			}
+			if (y->key < x->key) {
+				pred = y;
+				y = y->right.get();
+			}
+			else {
+				y = y->left.get();
+			}
+		}
+		return pred;
+	}
+
+	void transplant(Node* u, std::unique_ptr<Node>&& v) {
+		Node* p = tree_parent(u);
+		if (!p) {
+			root = std::move(v);
+		}
+		else if (u == p->left.get()) {
+			p->left = std::move(v);
+		}
+		else {
+			p->right = std::move(v);
+		}
+	}
+
+
 	// working...
-	// 1. transplant
-	// 2. tree_delete
-	// 3. tree_successor
+	void tree_delete(Node* z) {
+		Node* pred = tree_predecessor(z);
+		pred->succ = z->succ;
+		if (!z->left) {
+			transplant(z, std::move(z->right));
+		}
+		else if (!z->right) {
+			transplant(z, std::move(z->left));
+		}
+		else {
+			Node* y = tree_minimum(z->right.get());
+			Node* temp = z->right.get();
+			std::unique_ptr<Node> upy;
+			if (y == z->right.get()) {
+				upy = std::move(z->right);
+			}
+			else {
+				while (temp->left) {
+					temp = temp->left.get();
+				}
+				upy = std::move(tree_parent(temp)->left);
+			}
+			if (tree_parent(y) != z) {
+				transplant(y, std::move(y->right));
+				y->right = std::move(z->right);
+			}
+			y->left = std::move(z->left);
+			transplant(z, std::move(upy));
+		}
+	}
 };
 
 int main()
@@ -130,4 +204,8 @@ int main()
 	bst.tree_insert(7);
 	bst.tree_insert(9);
 	bst.inorder_tree_walk();
+	std::cout << '\n';
+	bst.tree_delete(7);
+	bst.inorder_tree_walk();
+
 }
