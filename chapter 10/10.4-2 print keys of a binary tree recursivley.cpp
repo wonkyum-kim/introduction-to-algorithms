@@ -1,62 +1,108 @@
-#include <iostream>
-#include <memory>
+#include<iostream>
+#include<memory>
+#include<utility>
+#include<stack>
 
-template <typename T>
-struct Binary_tree_node {
-    T key;
-    std::unique_ptr<Binary_tree_node<T>> left;
-    std::unique_ptr<Binary_tree_node<T>> right;
+template<typename T>
+class BT {
+private:
+	struct Node {
+		T key;
+		std::unique_ptr<Node> left;
+		std::unique_ptr<Node> right;
+		Node(const T& k) :
+			key{ k }, left{ nullptr }, right{ nullptr } {}
+	};
 
-    Binary_tree_node(const T& key) : key{ key } {}
+	std::unique_ptr<Node> root = nullptr;
+
+public:
+	Node* make_root(const T& k) {
+		root = std::make_unique<Node>(k);
+		return root.get();
+	}
+
+	Node* make_left(Node* x, const T& k) {
+		auto child = std::make_unique<Node>(k);
+		x->left = std::move(child);
+		return x->left.get();
+	}
+
+	Node* make_right(Node* x, const T& k) {
+		auto child = std::make_unique<Node>(k);
+		x->right = std::move(child);
+		return x->right.get();
+	}
+
+	Node* search(const T& k) {
+		if (!root) {
+			return nullptr;
+		}
+		else {
+			return search(root.get(), k);
+		}
+	}
+
+	void inorder_tree_walk() {
+		inorder_tree_walk(root.get());
+	}
+
+private:
+	void inorder_tree_walk(Node* x) {
+		if (x) {
+			inorder_tree_walk(x->left.get());
+			std::cout << x->key << ' ';
+			inorder_tree_walk(x->right.get());
+		}
+	}
+
+	Node* search(Node* x, const T& k) {
+		std::stack<Node*> s;
+		s.push(x);
+		while (!s.empty()) {
+			auto x = s.top();
+			while (x) {
+				s.push(x->left.get());
+				x = s.top();
+			}
+			s.pop();
+			if (!s.empty()) {
+				x = s.top();
+				s.pop();
+				if (x->key == k) {
+					return x;
+				}
+				s.push(x->right.get());
+			}
+		}
+		return nullptr;
+	}
+
 };
-
-template<typename T>
-std::unique_ptr<Binary_tree_node<T>> make_binary_tree_node(T key)
-{
-    auto node = std::make_unique<Binary_tree_node<int>>(key);
-    return node;
-}
-
-template<typename T>
-void make_left_child(std::unique_ptr<Binary_tree_node<T>>& main, std::unique_ptr<Binary_tree_node<T>>& sub)
-{
-    main.get()->left = std::move(sub);
-}
-
-template<typename T>
-void make_right_child(std::unique_ptr<Binary_tree_node<T>>& main, std::unique_ptr<Binary_tree_node<T>>& sub)
-{
-    main.get()->right = std::move(sub);
-}
-
-template<typename T>
-void inorder_traverse(Binary_tree_node<T>* node)
-{
-    if (node) {
-        inorder_traverse(node->left.get());
-        std::cout << node->key << ' ';
-        inorder_traverse(node->right.get());
-    }
-}
-
-template<typename T>
-void inorder_traverse(std::unique_ptr<Binary_tree_node<T>>& node)
-{
-    inorder_traverse(node.get());
-}
-
 
 int main()
 {
-    auto node1 = make_binary_tree_node(1);
-    auto node2 = make_binary_tree_node(2);
-    auto node3 = make_binary_tree_node(3);
-    auto node4 = make_binary_tree_node(4);
-    auto node5 = make_binary_tree_node(5);
+	int n = 0;
+	std::cin >> n;
+	BT<int> bt;
 
-    make_left_child(node1, node2);
-    make_right_child(node1, node3);
-    make_left_child(node1.get()->left, node4);
-    make_right_child(node1.get()->right, node5);
-    inorder_traverse(node1);
+	for (auto i = 0; i < n; ++i) {
+		int first;
+		int second;
+		int third;
+		std::cin >> first >> second >> third;
+
+		auto node = bt.search(first);
+		if (!bt.search(first)) {
+			node = bt.make_root(first);
+		}
+		if (second != -1) {
+			auto temp = bt.make_left(node, second);
+		}
+		if (third != -1) {
+			auto temp = bt.make_right(node, third);
+		}
+	}
+
+	bt.inorder_tree_walk();
 }
