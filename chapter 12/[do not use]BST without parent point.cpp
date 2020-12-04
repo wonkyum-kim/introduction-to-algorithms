@@ -1,6 +1,12 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+#include <vector>
+#include <numeric>
+#include <algorithm>
+#include <random>
+
+std::mt19937 gen(std::random_device{}());
 
 template<typename T>
 class BST {
@@ -10,7 +16,7 @@ private:
 		std::unique_ptr<Node> left;
 		std::unique_ptr<Node> right;
 		Node(const T& k) :
-			key{k}, left{nullptr}, right{nullptr} {}
+			key{ k }, left{ nullptr }, right{ nullptr } {}
 	};
 public:
 	std::unique_ptr<Node> root = nullptr;
@@ -153,33 +159,38 @@ private:
 			}
 		}
 	}
-	
+
 };
+
 
 int main()
 {
 	BST<int> bst;
-	bst.tree_insert(10);
-	bst.tree_insert(20);
-	bst.tree_insert(30);
-	bst.tree_insert(40);
-	if (bst.tree_search(20)) {
-		std::cout << "tree_search is okay" << '\n';
+	std::vector<int> v(101);
+	std::iota(v.begin() + 1, v.end(), 1);
+
+	std::shuffle(v.begin() + 1, v.end(), gen);
+	for (auto i = 1; i < v.size(); ++i) {
+		bst.tree_insert(v[i]);
 	}
-	if (bst.iterative_tree_search(30)) {
-		std::cout << "iterative_tree_search is okay" << '\n';
+
+	bst.inorder_tree_walk();
+	std::cout << '\n';
+	std::cout << '\n';
+
+	std::shuffle(v.begin() + 1, v.end(), gen);
+	for (auto i = 1; i < v.size(); i++) {
+		bst.tree_delete(v[i]);
 	}
+
+	std::cout << "empty \n";
 	bst.inorder_tree_walk();
-	bst.tree_delete(10);
 	std::cout << '\n';
-	bst.inorder_tree_walk();
-	bst.tree_delete(40);
-	std::cout << '\n';
-	bst.inorder_tree_walk();
-	bst.tree_delete(20);
-	std::cout << '\n';
-	bst.inorder_tree_walk();
-	bst.tree_delete(30);
-	std::cout << '\n';
+
+	std::shuffle(v.begin() + 1, v.end(), gen);
+	for (auto i = 1; i < v.size(); ++i) {
+		bst.tree_insert(v[i]);
+	}
+
 	bst.inorder_tree_walk();
 }
