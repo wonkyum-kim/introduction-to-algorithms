@@ -1,71 +1,98 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+#include <random>
+#include <algorithm>
+#include <numeric>
+
+std::mt19937 gen(std::random_device{}());
 
 template<typename T>
 class BST {
 private:
-
 	struct Node {
 		T key;
-		Node* succ;
+		Node* parent;
 		std::unique_ptr<Node> left;
 		std::unique_ptr<Node> right;
 		Node(const T& k) :
-			key{ k }, succ{ nullptr }, left{ nullptr }, right{ nullptr } {}
+			key{ k }, parent{ nullptr }, left{ nullptr }, right{ nullptr } {}
 	};
+public:
+	//------------------------------------------------------
 
 	std::unique_ptr<Node> root = nullptr;
 
-public:
-
-	void inorder_tree_walk() {
-		inorder_tree_walk(root.get());
-	}
+	//------------------------------------------------------
 
 	Node* tree_search(const T& k) {
 		return tree_search(root.get(), k);
 	}
 
-	void tree_insert(const T& k) {
-		tree_insert(root.get(), k);
+	Node* iterative_tree_search(const T& k) {
+		return iterative_tree_search(root.get(), k);
 	}
 
-	void tree_delete(const T& k) {
-		Node* z = tree_search(k);
-		tree_delete(z);
+	//------------------------------------------------------
+
+	void tree_insert(const T& k) {
+		auto z = std::make_unique<Node>(k);
+		Node* y = nullptr;
+		Node* x = root.get();
+		while (x) {
+			y = x;
+			if (k < x->key) {
+				x = x->left.get();
+			}
+			else {
+				x = x->right.get();
+			}
+		}
+		// z->parent = y;
+		if (!y) {
+			root = std::move(z);
+		}
+		else if (k < y->key) {
+			y->left = std::move(z);
+		}
+		else {
+			y->right = std::move(z);
+		}
 	}
+
+	//------------------------------------------------------
+
+	void inorder_tree_walk() {
+		if (root) {
+			inorder_tree_walk(root.get());
+		}
+		else {
+			std::cout << "empty";
+		}
+	}
+
+	//------------------------------------------------------
+
+	void tree_delete(const T& k) {
+		if (tree_search(k)) {
+			auto z = tree_search(k);
+			tree_delete(z);
+		}
+		else {
+			return;
+		}
+	}
+
+	//------------------------------------------------------
 
 private:
 
-	void inorder_tree_walk(Node* x) {
-		if (x) {
-			inorder_tree_walk(x->left.get());
-			std::cout << x->key << ' ';
-			inorder_tree_walk(x->right.get());
-		}
-	}
+	//------------------------------------------------------
 
-	Node* tree_maximum(Node* x) {
-		while (x->right) {
-			x = x->right.get();
-		}
-		return x;
-	}
+	/* recursive version */
 
-	Node* tree_minimum(Node* x) {
-		while (x->left) {
-			x = x->left.get();
-		}
-		return x;
-	}
-
-	// tree_search is unchanged.
 	Node* tree_search(Node* x, const T& k) {
-		if (!x) {
-			return x;
-		}
-		if (k == x->key) {
+		if (!x || k == x->key) {
 			return x;
 		}
 		else if (k < x->key) {
@@ -76,135 +103,153 @@ private:
 		}
 	}
 
-	Node* tree_parent(Node* x) {
-		if (x == root.get()) {
-			return nullptr;
-		}
-		Node* y = tree_maximum(x)->succ;
-		if (!y) {
-			y = root.get();
-		}
-		else {
-			if (x == y->left.get()) {
-				return y;
-			}
-			y = y->left.get();
-		}
-		while (x != y->right.get()) {
-			y = y->right.get();
-		}
-		return y;
-	}
+	/* iterative version */
 
-	void tree_insert(Node* x, const T& k) {
-		auto z = std::make_unique<Node>(k);
-		Node* y = nullptr;
-		Node* pred = nullptr;
-		while (x) {
-			y = x;
+	Node* iterative_tree_search(Node* x, const T& k) {
+		while (x && k != x->key) {
 			if (k < x->key) {
 				x = x->left.get();
 			}
 			else {
-				pred = x;
 				x = x->right.get();
 			}
 		}
-		if (!y) {
-			root = std::move(z);
+		return x;
+	}
+
+	//------------------------------------------------------
+
+	/* iterative version */
+
+	Node* tree_minimum(Node* x) {
+		while (x->left) {
+			x = x->left.get();
 		}
-		else if (k < y->key) {
-			z->succ = y;
-			if (pred) {
-				pred->succ = z.get();
-			}
-			y->left = std::move(z);
+		return x;
+	}
+
+	Node* tree_maximum(Node* x) {
+		while (x->right) {
+			x = x->right.get();
 		}
-		else {
-			z->succ = y->succ;
-			y->succ = z.get();
-			y->right = std::move(z);
+		return x;
+	}
+
+	//------------------------------------------------------
+
+	void inorder_tree_walk(Node* x) {
+		if (x) {
+			inorder_tree_walk(x->left.get());
+			std::cout << x->key << ' ';
+			inorder_tree_walk(x->right.get());
 		}
 	}
 
-	Node* tree_predecessor(Node* x) {
-		if (x->left) {
-			return tree_maximum(x->left.get());
-		}
-		Node* y = tree_parent(x);
-		while (y && x == y->left.get()) {
-			x = y;
-			y = tree_parent(y);
-		}
-		return y;
-	}
+	//------------------------------------------------------
 
 	Node* tree_successor(Node* x) {
-		if (x->left) {
+		if (x->right) {
 			return tree_minimum(x->right.get());
 		}
-		Node* y = tree_parent(x);
+		Node* y = x->parent;
 		while (y && x == y->right.get()) {
 			x = y;
-			y = tree_parent(y);
+			y = y->parent;
 		}
 		return y;
 	}
 
+	//------------------------------------------------------
+
 	void transplant(Node* u, std::unique_ptr<Node>&& v) {
-		Node* up = tree_parent(u);
-		if (!up) {
+		if (v) {
+			v->parent = u->parent;
+		}
+		if (!u->parent) {
 			root = std::move(v);
 		}
-		else if (u == up->left.get()) {
-			up->left = std::move(v);
+		else if (u == u->parent->left.get()) {
+			u->parent->left = std::move(v);
 		}
 		else {
-			up->right = std::move(v);
+			u->parent->right = std::move(v);
 		}
 	}
 
-	// working...
 	void tree_delete(Node* z) {
-		Node* pred = tree_predecessor(z);
-		pred->succ = tree_successor(z);
-		if (!z->left) {
+		if (!z->left && !z->right) {
+			if (z->parent && z == z->parent->left.get()) {
+				z->parent->left.reset(nullptr);
+			}
+			else if (z->parent && z == z->parent->right.get()) {
+				z->parent->right.reset(nullptr);
+			}
+			else {
+				root.reset(nullptr);
+			}
+		}
+		else if (!z->left && z->right) {
 			transplant(z, std::move(z->right));
 		}
 		else if (!z->right) {
 			transplant(z, std::move(z->left));
 		}
 		else {
-			Node* y = tree_minimum(z->right.get());
-			Node* yp = tree_parent(y);
-			std::unique_ptr<Node> upy = nullptr;
-			if (yp != z) {
-				upy = std::move(yp->left);
-				std::unique_ptr<Node> x = std::move(upy->right);
-				transplant(tree_minimum(z->right.get())->left.get(), std::move(x));
-				transplant(upy->right.get(), std::move(z->right));
+			/* set y */
+			Node* zr_min = z->right.get();
+			while (zr_min->left) {
+				zr_min = zr_min->left.get();
 			}
+			std::unique_ptr<Node> y = nullptr;
+			/* case 1 */
+			if (zr_min->parent == z) {
+				y = std::move(z->right);
+				y->left = std::move(z->left);
+				y->left->parent = y.get();
+				transplant(z, std::move(y));
+			}
+			/* case 2 */
 			else {
-				upy = std::move(z->right);
+				y = std::move(zr_min->parent->left);
+				std::unique_ptr<Node> x = nullptr;
+				if (y->right) {
+					x = std::move(y->right);
+				}
+				y->right = std::move(z->right);
+				y->right->parent = y->right.get();
+				if (x) {
+					y->right->left = std::move(x);
+					y->right->left->parent = y->right->left.get();
+				}
+				transplant(z, std::move(y));
 			}
-			std::unique_ptr<Node> upzl = std::move(z->left);
-			upy->left = std::move(upzl);
-			transplant(z, std::move(upy));
 		}
 	}
+
+	//------------------------------------------------------
+
 };
 
 int main()
 {
 	BST<int> bst;
-	bst.tree_insert(10);
-	bst.tree_insert(8);
-	bst.tree_insert(12);
-	bst.tree_insert(7);
-	bst.tree_insert(9);
+	std::vector<int> v(101);
+	std::iota(v.begin() + 1, v.end(), 1);
+
+	std::shuffle(v.begin() + 1, v.end(), gen);
+	for (auto i = 1; i < v.size(); ++i) {
+		bst.tree_insert(v[i]);
+	}
+
 	bst.inorder_tree_walk();
 	std::cout << '\n';
-	bst.tree_delete(7);
-	bst.inorder_tree_walk();
+	std::cout << '\n';
 
+	std::shuffle(v.begin() + 1, v.end(), gen);
+	for (auto i = 1; i < v.size() / 10; i++) {
+		bst.tree_delete(v[i]);
+	}
+	bst.inorder_tree_walk();
+	std::cout << '\n';
+	std::cout << "success";
 }
