@@ -1,6 +1,12 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+#include <vector>
+#include <numeric>
+#include <algorithm>
+#include <random>
+
+std::mt19937 gen(std::random_device{}());
 
 template<typename T>
 class BST {
@@ -72,7 +78,12 @@ public:
 
 	void tree_delete(const T& k) {
 		auto z = tree_search(k);
-		tree_delete(z);
+		if (z) {
+			tree_delete(z);
+		}
+		else {
+			return;
+		}
 	}
 
 	//------------------------------------------------------
@@ -187,51 +198,59 @@ private:
 
 	//------------------------------------------------------
 
-	void transplant(Node* u, std::unique_ptr<Node>&& v) {
+	Node* transplant(Node* u, std::unique_ptr<Node>&& v) {
 		if (v) {
 			v->parent = u->parent;
 		}
+		Node* w = nullptr;
 		if (!u->parent) {
+			w = root.release();
 			root = std::move(v);
 		}
 		else if (u == u->parent->left.get()) {
+			w = u->parent->left.release();
 			u->parent->left = std::move(v);
 		}
 		else {
+			w = u->parent->right.release();
 			u->parent->right = std::move(v);
 		}
+		return w;
 	}
 
 	void tree_delete(Node* z) {
-		// case 1 : z has one child
-		// case 1-1 : z has a right child
+		Node* x = nullptr;
+		Node* xp = nullptr;
 		if (!z->left) {
-			transplant(z, std::move(z->right));
+			Node* pz = transplant(z, std::move(z->right));
+			auto upz = std::unique_ptr<Node>(pz);
 		}
-		// case 1-2 : z has a left child
 		else if (!z->right) {
-			transplant(z, std::move(z->left));
+			Node* pz = transplant(z, std::move(z->left));
+			auto upz = std::unique_ptr<Node>(pz);
 		}
-		// case 2 : z has two children
 		else {
 			Node* y = tree_minimum(z->right.get());
-			std::unique_ptr<Node> upy = nullptr;
-			if (y->parent != z) {
-				// disconnect a link between z->right's subtree and y's subtree
-				upy = std::move(y->parent->left);
-				// disconnect a link between y and y->right's subtree
-				std::unique_ptr<Node> x = std::move(upy->right);
-				// link z->right's subtree with x
-				transplant(tree_minimum(z->right.get())->left.get(), std::move(x));
-				// link y with z->right's subtree
-				transplant(upy->right.get(), std::move(z->right));
+			x = y->right.get();
+			if (y->parent == z) {
+				//
+				xp = y;
+				Node* pz = transplant(z, std::move(z->right));
+				y->left = std::move(pz->left);
+				y->left->parent = y;
+				auto upz = std::unique_ptr<Node>(pz);
 			}
 			else {
-				upy = std::move(z->right);
+				xp = y->parent;
+				Node* py = transplant(y, std::move(y->right));
+				py->right = std::move(z->right);
+				py->right->parent = py;
+				auto upy = std::unique_ptr<Node>(py);
+				Node* pz = transplant(z, std::move(upy));
+				py->left = std::move(pz->left);
+				py->left->parent = py;
+				auto upz = std::unique_ptr<Node>(pz);
 			}
-			std::unique_ptr<Node> upzl = std::move(z->left);
-			upy->left = std::move(upzl);
-			transplant(z, std::move(upy));
 		}
 	}
 
