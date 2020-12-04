@@ -4,7 +4,7 @@
 
 template<typename T>
 class BST {
-private: 
+private:
 
 	struct Node {
 		T key;
@@ -131,41 +131,43 @@ private:
 		if (x->left) {
 			return tree_maximum(x->left.get());
 		}
-		Node* y = root.get();
-		Node* pred = nullptr;
-		while (y) {
-			if (y->key == x->key) {
-				break;
-			}
-			if (y->key < x->key) {
-				pred = y;
-				y = y->right.get();
-			}
-			else {
-				y = y->left.get();
-			}
+		Node* y = tree_parent(x);
+		while (y && x == y->left.get()) {
+			x = y;
+			y = tree_parent(y);
 		}
-		return pred;
+		return y;
+	}
+
+	Node* tree_successor(Node* x) {
+		if (x->left) {
+			return tree_minimum(x->right.get());
+		}
+		Node* y = tree_parent(x);
+		while (y && x == y->right.get()) {
+			x = y;
+			y = tree_parent(y);
+		}
+		return y;
 	}
 
 	void transplant(Node* u, std::unique_ptr<Node>&& v) {
-		Node* p = tree_parent(u);
-		if (!p) {
+		Node* up = tree_parent(u);
+		if (!up) {
 			root = std::move(v);
 		}
-		else if (u == p->left.get()) {
-			p->left = std::move(v);
+		else if (u == up->left.get()) {
+			up->left = std::move(v);
 		}
 		else {
-			p->right = std::move(v);
+			up->right = std::move(v);
 		}
 	}
-
 
 	// working...
 	void tree_delete(Node* z) {
 		Node* pred = tree_predecessor(z);
-		pred->succ = z->succ;
+		pred->succ = tree_successor(z);
 		if (!z->left) {
 			transplant(z, std::move(z->right));
 		}
@@ -174,22 +176,19 @@ private:
 		}
 		else {
 			Node* y = tree_minimum(z->right.get());
-			Node* temp = z->right.get();
-			std::unique_ptr<Node> upy;
-			if (y == z->right.get()) {
-				upy = std::move(z->right);
+			Node* yp = tree_parent(y);
+			std::unique_ptr<Node> upy = nullptr;
+			if (yp != z) {
+				upy = std::move(yp->left);
+				std::unique_ptr<Node> x = std::move(upy->right);
+				transplant(tree_minimum(z->right.get())->left.get(), std::move(x));
+				transplant(upy->right.get(), std::move(z->right));
 			}
 			else {
-				while (temp->left) {
-					temp = temp->left.get();
-				}
-				upy = std::move(tree_parent(temp)->left);
+				upy = std::move(z->right);
 			}
-			if (tree_parent(y) != z) {
-				transplant(y, std::move(y->right));
-				y->right = std::move(z->right);
-			}
-			y->left = std::move(z->left);
+			std::unique_ptr<Node> upzl = std::move(z->left);
+			upy->left = std::move(upzl);
 			transplant(z, std::move(upy));
 		}
 	}
