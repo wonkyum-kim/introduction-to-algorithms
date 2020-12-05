@@ -5,6 +5,7 @@
 #include <numeric>
 #include <algorithm>
 #include <random>
+#include <crtdbg.h>
 
 std::mt19937 gen(std::random_device{}());
 
@@ -181,36 +182,35 @@ private:
 	}
 
 	void tree_delete(Node* z) {
-		Node* x = nullptr;
-		Node* xp = nullptr;
 		if (!z->left) {
 			Node* pz = transplant(z, std::move(z->right));
+			// delete heap memory
 			auto upz = std::unique_ptr<Node>(pz);
 		}
 		else if (!z->right) {
 			Node* pz = transplant(z, std::move(z->left));
+			// delete heap memory
 			auto upz = std::unique_ptr<Node>(pz);
 		}
 		else {
 			Node* y = tree_minimum(z->right.get());
-			x = y->right.get();
 			if (y->parent == z) {
-				//
-				xp = y;
 				Node* pz = transplant(z, std::move(z->right));
 				y->left = std::move(pz->left);
 				y->left->parent = y;
+				// delete heap memory
 				auto upz = std::unique_ptr<Node>(pz);
 			}
 			else {
-				xp = y->parent;
 				Node* py = transplant(y, std::move(y->right));
 				py->right = std::move(z->right);
 				py->right->parent = py;
+				// delete heap memory
 				auto upy = std::unique_ptr<Node>(py);
 				Node* pz = transplant(z, std::move(upy));
 				py->left = std::move(pz->left);
 				py->left->parent = py;
+				// delete heap memory
 				auto upz = std::unique_ptr<Node>(pz);
 			}
 		}
@@ -250,4 +250,5 @@ int main()
 	}
 
 	bst.inorder_tree_walk();
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 }
