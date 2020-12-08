@@ -5,7 +5,6 @@
 #include <numeric>
 #include <algorithm>
 #include <random>
-#include <crtdbg.h>
 
 std::mt19937 gen(std::random_device{}());
 
@@ -57,24 +56,6 @@ public:
 			y->right = std::move(z);
 			y->right->succ = y->succ;
 			y->succ = y->right.get();
-		}
-	}
-
-	// check succ pointer
-	void check_succ() {
-		Node* x = tree_search(1);
-		while (x) {
-			std::cout << x->key << ' ';
-			x = x->succ;
-		}
-	}
-
-	// check tree_predecessor function
-	void check_pred() {
-		Node* x = tree_search(100);
-		while (x) {
-			std::cout << x->key << ' ';
-			x = tree_predecessor(x);
 		}
 	}
 
@@ -184,9 +165,7 @@ private:
 
 	void tree_delete(Node* z) {
 		Node* pred = tree_predecessor(z);
-		if (pred) {
-			pred->succ = z->succ;
-		}
+		Node* zsucc = z->succ;
 		if (!z->left) {
 			Node* pz = transplant(z, std::move(z->right));
 			auto upz = std::unique_ptr<Node>(pz);
@@ -205,21 +184,23 @@ private:
 			else {
 				Node* py = transplant(y, std::move(y->right));
 				py->right = std::move(z->right);
-				// delete heap memory
 				auto upy = std::unique_ptr<Node>(py);
 				Node* pz = transplant(z, std::move(upy));
 				py->left = std::move(pz->left);
-				// delete heap memory
 				auto upz = std::unique_ptr<Node>(pz);
 			}
 		}
+		if (pred) {
+			pred->succ = z->succ;
+		}
 	}
+
 };
 
 int main()
 {
 	BST<int> bst;
-	std::vector<int> v(101);
+	std::vector<int> v(150);
 	std::iota(v.begin() + 1, v.end(), 1);
 
 	std::shuffle(v.begin() + 1, v.end(), gen);
@@ -246,5 +227,4 @@ int main()
 	}
 
 	bst.inorder_tree_walk();
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 }
