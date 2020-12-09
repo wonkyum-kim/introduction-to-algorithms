@@ -336,14 +336,14 @@ public:
 	}
 
 	void tree_delete(const T& k) {
-			auto z = tree_search(k);
-			if (z) {
-				tree_delete(z);
-			}
-			else {
-				return;
-			}
+		auto z = tree_search(k);
+		if (z) {
+			tree_delete(z);
 		}
+		else {
+			return;
+		}
+	}
 };
 
 int main()
