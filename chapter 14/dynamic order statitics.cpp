@@ -23,7 +23,7 @@ private:
 		std::unique_ptr<Node> left;
 		std::unique_ptr<Node> right;
 		Node(const T& k) :
-			key{ k }, color{ Color::Red }, size{1}, parent{ nullptr }, left{ nullptr }, right{ nullptr } {}
+			key{ k }, color{ Color::Red }, size{ 1 }, parent{ nullptr }, left{ nullptr }, right{ nullptr } {}
 	};
 
 	std::unique_ptr<Node> root = nullptr;
@@ -139,6 +139,13 @@ private:
 			}
 		}
 		z->parent = y;
+		// To maintain the subtree sizes, we simply increment x->size for each node x
+		// on the simple path traversed from the root down toward the leaves.
+		Node* simple_path = y;
+		while (simple_path) {
+			simple_path->size++;
+			simple_path = simple_path->parent;
+		}
 		if (!y) {
 			root = std::move(z);
 			rb_insert_fixup(root.get());
@@ -251,30 +258,50 @@ private:
 			xp = z->parent;
 			auto pz = rb_transplant(z, std::move(z->right));
 			auto upz = std::unique_ptr<Node>(pz);
+			Node* path = xp;
+			while (path) {
+				path->size--;
+				path = path->parent;
+			}
 		}
 		else if (!z->right) {
 			x = z->left.get();
 			xp = z->parent;
 			auto pz = rb_transplant(z, std::move(z->left));
 			auto upz = std::unique_ptr<Node>(pz);
+			Node* path = xp;
+			while (path) {
+				path->size--;
+				path = path->parent;
+			}
 		}
 		else {
-			auto y = tree_minimum(z->right.get());
+			Node* y = tree_minimum(z->right.get());
 			y_original_color = y->color;
 			x = y->right.get();
 			if (y->parent == z) {
-				if (x) {
-					x->parent = y;
-				}
 				xp = y;
+				Node* path = z->parent;
 				auto pz = rb_transplant(z, std::move(z->right));
 				y->left = std::move(pz->left);
 				y->left->parent = y;
 				y->color = pz->color;
 				auto upz = std::unique_ptr<Node>(pz);
+				y->size = y->left->size + (x ? x->size : 0) + 1;
+				while (path) {
+					path->size--;
+					path = path->parent;
+				}
 			}
 			else {
 				xp = y->parent;
+				//
+				Node* path = xp;
+				while (path) {
+					path->size--;
+					path = path->parent;
+				}
+				//
 				auto py = rb_transplant(y, std::move(y->right));
 				py->right = std::move(z->right);
 				py->right->parent = py;
@@ -283,7 +310,9 @@ private:
 				py->left = std::move(pz->left);
 				py->left->parent = py;
 				py->color = pz->color;
+				py->size = py->left->size + py->right->size + 1;
 				auto upz = std::unique_ptr<Node>(pz);
+
 			}
 		}
 		if (y_original_color == Color::Black) {
@@ -291,6 +320,7 @@ private:
 		}
 
 	}
+
 
 	void rb_delete_fixup(Node* x, Node* xp) {
 		while (x != root.get() && (!x || x->color == Color::Black)) {
@@ -429,7 +459,7 @@ public:
 	void os_select(size_t i) {
 		Node* x = os_select(root.get(), i);
 		if (x) {
-			std::cout << x->key;
+			std::cout << x->key << ' ';
 		}
 	}
 
@@ -442,18 +472,23 @@ public:
 int main()
 {
 	RBT<int> rbt;
-	/* 
 	std::vector<int> v(100);
 	std::iota(v.begin(), v.end(), 1);
+	std::vector<int> s = v;
 	std::shuffle(v.begin(), v.end(), gen);
-	*/
-	while (true) {
-		int a = 0;
-		std::cin >> a;
-		if (a == -1) {
-			break;
-		}
-		rbt.rb_insert(a);
+	for (auto x : v) {
+		rbt.rb_insert(x);
 	}
-	rbt.os_select(1);
+	for (auto x : s) {
+		rbt.os_select(x);
+	}
+	std::shuffle(v.begin(), v.end(), gen);
+	for (auto i = 1; i <= 90; ++i) {
+		rbt.rb_delete(v[i]);
+	}
+	std::cout << '\n';
+	for (auto i = 1; i < 11; ++i) {
+		rbt.os_select(i);
+	}
+
 }
