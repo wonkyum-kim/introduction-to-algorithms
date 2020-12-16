@@ -5,7 +5,6 @@
 #include <random>
 #include <vector>
 #include <numeric>
-#include <tuple>
 
 std::mt19937 gen(std::random_device{}());
 
@@ -484,8 +483,8 @@ public:
 template<typename T>
 size_t num_of_intersections(std::vector<std::pair<T, T>>& chords)
 {
-	if (chords.size() == 1) {
-		return 1;
+	if (chords.size() == 1 || chords.size() == 0) {
+		return chords.size();
 	}
 	for (auto& [a, b] : chords) {
 		if (a > b) {
@@ -499,16 +498,15 @@ size_t num_of_intersections(std::vector<std::pair<T, T>>& chords)
 		rbt.rb_insert(a);
 		rbt.rb_insert(b);
 	}
-	for (const auto& [a, b] : chords) {
-		inv.emplace_back(rbt.os_rank(a), rbt.os_rank(b));
-	}
+	size_t num = chords.size();
 	size_t count = 0;
-	for (auto i = 0; i < inv.size() - 1; ++i) {
-		for (auto j = 1; j < inv.size(); ++j) {
-			if (inv[i].first < inv[j].first && inv[j].first < inv[i].second && inv[i].second < inv[j].second) {
-				count++;
-			}
-		}
+	for (const auto& [a, b] : chords) {
+		size_t l = rbt.os_rank(b) - rbt.os_rank(a) - 1;
+		size_t r = num * 2 - rbt.os_rank(b);
+		num--;
+		count += std::min(l, r);
+		rbt.rb_delete(a);
+		rbt.rb_delete(b);
 	}
 	return count;
 }
@@ -517,7 +515,7 @@ size_t num_of_intersections(std::vector<std::pair<T, T>>& chords)
 int main()
 {
 	std::vector<std::pair<int, int>> chords = {
-		{1,7}, {2,5}, {3,9}, {4,8}, {6,10}
+		{1,6},{2,4},{3,7},{5,8}
 	};
 	
 	std::cout << num_of_intersections(chords);
