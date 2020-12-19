@@ -3,12 +3,14 @@
 #include <utility>
 #include <vector>
 
-std::vector<std::pair<int, int>> greedy_activity_selector(std::vector<std::pair<int, int>>& v)
+using activity = std::vector<std::pair<int, int>>;
+
+activity greedy_activity_selector(activity& v)
 {
 	// sort by finish time
 	std::sort(v.begin(), v.end(), [](auto a, auto b) {return a.second != b.second ? a.second < b.second : a.first < b.first; });
 
-	// selected activity vector
+	// selected activity
 	std::vector<std::pair<int, int>> A;
 	A.push_back(v[0]);
 
@@ -27,15 +29,12 @@ std::vector<std::pair<int, int>> greedy_activity_selector(std::vector<std::pair<
 int main() {
 	int test;
 	std::cin >> test;
-
-	std::vector<std::pair<int, int>> v;
-
+	activity v;
 	for (auto i = 0; i < test; ++i) {
 		int a = 0, b = 0;
 		std::cin >> a >> b;
 		v.push_back({ a, b });
 	}
-
-	std::vector<std::pair<int, int>> A = greedy_activity_selector(v);
+	auto A = greedy_activity_selector(v);
 	std::cout << A.size();
 }
