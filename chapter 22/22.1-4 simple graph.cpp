@@ -3,8 +3,8 @@
 
 class Directed_Graph {
 private:
-	int n;							              	// number of nodes
-	std::vector<std::vector<int>> adj;	// adjacency list
+	int n;					
+	std::vector<std::vector<int>> adj;	
 public:
 	Directed_Graph(int n) : n{ n } , adj(n) {}
 
