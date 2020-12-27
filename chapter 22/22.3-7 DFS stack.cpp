@@ -30,12 +30,6 @@ public:
 		}
 	}
 
-	void sort_adj() {
-		for (auto i = 0; i < n; ++i) {
-			std::sort(adj[i].begin(), adj[i].end());
-		}
-	}
-
 	using vertex_info = std::tuple<bool, size_t, size_t, size_t>;	// u.visit, u.d, u.f, u.phi
 
 	void DFS_stack() {
@@ -78,6 +72,5 @@ int main()
 	g.add_edge(1, 4);
 	g.add_edge(2, 5);
 	g.add_edge(4, 5);
-	g.sort_adj();
 	g.DFS_stack();	
 }
