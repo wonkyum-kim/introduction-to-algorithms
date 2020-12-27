@@ -16,6 +16,10 @@ private:
 	using edge_weight = double;
 	using edge = std::tuple<vertex, vertex, edge_weight>;
 
+	enum class Color {
+		White, Gray, Black
+	};
+
 	vertex n;
 	Graph_Type type;
 	std::vector<std::vector<size_t>> adj;
@@ -30,34 +34,46 @@ public:
 		}
 	}
 
-	using vertex_info = std::tuple<bool, size_t, size_t, size_t>;	// u.visit, u.d, u.f, u.phi
+	void sort_adj() {
+		for (auto i = 0; i < n; ++i) {
+			std::sort(adj[i].begin(), adj[i].end());
+		}
+	}
 
-	void DFS_stack() {
-		std::vector<vertex_info> info(n, { false,0,0,-1 });
+	using vertex_info = std::tuple<Color, size_t, size_t, size_t>;	// u.color, u.d, u.f, u.phi
+
+	void DFS() {
+		std::vector<vertex_info> info(n, { Color::White,0,0,-1 });
 		size_t time = 0;
 		std::stack<size_t> s;
 		for (auto u = 0; u < n; ++u) {
-			if (!std::get<0>(info[u])) {
-				std::get<0>(info[u]) = true;
+			if (std::get<0>(info[u]) == Color::White) {
 				s.push(u);
-			}
-			else {
-				continue;
-			}
-			while (!s.empty()) {
-				size_t v = s.top();
-				s.pop();
-				time++;
-				std::get<1>(info[v]) = time;
-				for (auto w : adj[v]) {
-					if (!std::get<0>(info[w])) {
-						std::get<0>(info[w]) = true;
-						std::get<3>(info[w]) = v;
-						s.push(w);
+				while (!s.empty()) {
+					size_t v = s.top();
+					s.pop();
+					if (std::get<0>(info[v]) != Color::Black) {
+						std::cout << v + 1 << ' ';
 					}
+					time++;
+					std::get<1>(info[v]) = time;
+					std::get<0>(info[v]) = Color::Black;
+					std::stack<size_t> temp;
+					for (auto w : adj[v]) {
+						if (std::get<0>(info[w]) == Color::White || std::get<0>(info[w]) == Color::Gray ) {
+							std::get<0>(info[w]) = Color::Gray;
+							std::get<3>(info[w]) = v;
+							temp.push(w);
+						}
+					}
+					while (!temp.empty()) {
+						auto neighbor = temp.top();
+						temp.pop();
+						s.push(neighbor);
+					}
+					time++;
+					std::get<2>(info[v]) = time;
 				}
-				time++;
-				std::get<2>(info[v]) = time;
 			}
 		}
 	}
@@ -72,5 +88,5 @@ int main()
 	g.add_edge(1, 4);
 	g.add_edge(2, 5);
 	g.add_edge(4, 5);
-	g.DFS_stack();	
+	g.DFS();	
 }
