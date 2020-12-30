@@ -13,7 +13,7 @@ enum class Graph_Type {
 class Graph {
 private:
 	using vertex = size_t;
-	using edge_weight = double;
+	using edge_weight = int;
 
 	enum class Color {
 		White, Gray, Black
@@ -21,7 +21,7 @@ private:
 
 	vertex n;
 	Graph_Type type;
-	std::vector<std::vector<std::pair<size_t, int>>> adj;
+	std::vector<std::vector<std::pair<vertex, edge_weight>>> adj;
 	int diameter = 0;
 	int end_point = 0;
 
