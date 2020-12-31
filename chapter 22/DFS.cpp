@@ -14,7 +14,6 @@ class Graph {
 private:
 	using vertex = size_t;
 	using edge_weight = double;
-	using edge = std::tuple<vertex, vertex, edge_weight>;
 
 	enum class Color {
 		White, Gray, Black
