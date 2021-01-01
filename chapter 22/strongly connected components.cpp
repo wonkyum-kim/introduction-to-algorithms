@@ -1,10 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <tuple>
-#include <numeric>
-#include <stack>
-#include <utility>
 #include <list>
 #include <cassert>
 
@@ -21,18 +17,26 @@ private:
 		White, Gray, Black
 	};
 
+	struct vertex_info {
+		Color color = Color::White;
+		size_t d = 0;
+		size_t f = 0;
+		size_t phi = -1;
+	};
+
 	vertex n;
-	Graph_Type type;
-	std::vector<std::vector<size_t>> adj;
+	Graph_Type g_type;
+	std::vector<std::vector<vertex>> adj;
+	std::vector<vertex_info> info;
 	std::list<size_t> sorted;
-	std::vector<std::vector<size_t>> SCC;
+	std::vector<std::vector<vertex>> SCC;
 
 public:
-	Graph(size_t n, Graph_Type dir) : n{ n }, type{ dir }, adj(n) {}
+	Graph(vertex n, Graph_Type g_type) : n{n},g_type{g_type},adj(n), info(n){}
 
-	void add_edge(size_t u, size_t v) {
+	void add_edge(vertex u, vertex v) {
 		adj[u].push_back(v);
-		if (type == Graph_Type::Undirected) {
+		if (g_type == Graph_Type::Undirected) {
 			adj[v].push_back(u);
 		}
 	}
@@ -43,90 +47,80 @@ public:
 		}
 	}
 
-	using vertex_info = std::tuple<Color, size_t, size_t, size_t>;	// u.color, u.d, u.f, u.phi
-
 	void DFS() {
-		std::vector<vertex_info> info(n, { Color::White, 0, 0, -1 });
 		size_t time = 0;
 		for (auto i = 0; i < n; ++i) {
-			if (std::get<0>(info[i]) == Color::White) {
-				DFS_visit(i, time, info);
+			if (info[i].color == Color::White) {
+				DFS_visit(i, time);
 			}
 		}
 	}
 
-	std::list<size_t> topological_sort() {
-		assert(type == Graph_Type::Directed);
+	std::list<vertex> topological_sort() {
+		assert(g_type == Graph_Type::Directed);
 		DFS();
 		return sorted;
 	}
 
 	void strongly_connected_components() {
+		DFS();
 		Graph transposed(n, Graph_Type::Directed);
 		for (auto i = 0; i < n; ++i) {
-			for (auto neighbor : adj[i]) {
+			for (const auto& neighbor : adj[i]) {
 				transposed.add_edge(neighbor, i);
 			}
 		}
 		DFS_SCC(transposed);
-		for (const auto& row : SCC) {
-			for (const auto& components : row) {
-				std::cout << components << ' ';
+		for (const auto& r : SCC) {
+			for (const auto& c : r) {
+				std::cout << c << ' ';
 			}
 			std::cout << '\n';
 		}
 	}
 
 private:
-	void DFS_visit(size_t u, size_t& time, std::vector<vertex_info>& info) {
+	void DFS_visit(vertex u, size_t& time) {
 		++time;
-		std::get<1>(info[u]) = time;
-		std::get<0>(info[u]) = Color::Gray;
+		info[u].d = time;
+		info[u].color = Color::Gray;
 		for (auto v : adj[u]) {
-			if (std::get<0>(info[v]) == Color::White) {
-				std::get<3>(info[v]) = u;
-				DFS_visit(v, time, info);
+			if (info[v].color == Color::White) {
+				info[v].phi = u;
+				DFS_visit(v, time);
 			}
 		}
-		std::get<0>(info[u]) = Color::Black;
+		info[u].color = Color::Black;
 		++time;
-		std::get<2>(info[u]) = time;
+		info[u].f = time;
 		sorted.push_front(u);
 	}
 
 	void DFS_SCC(Graph& transposed) {
-		std::list<size_t> sorted = topological_sort();
-		std::vector<vertex_info> info(n, { Color::White, 0, 0, -1 });
-		size_t time = 0;
-		while(!sorted.empty()) {
-			size_t i = sorted.front();
+		while (!sorted.empty()) {
+			vertex i = sorted.front();
 			sorted.pop_front();
-			std::vector<size_t> scc;
-			if (std::get<0>(info[i]) == Color::White) {
-				DFS_SCC_visit(transposed,i, time, info, scc);
+			std::vector<vertex> scc;
+			if (transposed.info[i].color == Color::White) {
+				DFS_SCC_visit(transposed, i, scc);
 				SCC.push_back(scc);
 			}
 		}
 	}
 
-	void DFS_SCC_visit(Graph& transposed, size_t u, size_t& time, std::vector<vertex_info>& info, std::vector<size_t>& scc) {
-		++time;
-		std::get<1>(info[u]) = time;
-		std::get<0>(info[u]) = Color::Gray;
+	void DFS_SCC_visit(Graph& transposed, vertex u, std::vector<vertex>& scc) {
+		transposed.info[u].color = Color::Gray;
 		scc.push_back(u);
-		for (auto v : transposed.adj[u]) {
-			if (std::get<0>(info[v]) == Color::White) {
-				std::get<3>(info[v]) = u;
-				DFS_SCC_visit(transposed, v, time, info, scc);
+		for (const auto& v : transposed.adj[u]) {
+			if (transposed.info[v].color == Color::White) {
+				DFS_SCC_visit(transposed, v, scc);
 			}
 		}
-		std::get<0>(info[u]) = Color::Black;
-		++time;
-		std::get<2>(info[u]) = time;
+		transposed.info[u].color = Color::Black;
 	}
 };
 
-int main()
+int main() 
 {
 	Graph g(8, Graph_Type::Directed);
 	g.add_edge(0, 1);
