@@ -69,22 +69,20 @@ public:
 	Graph component_graph() {
 		strongly_connected_components();
 		size_t SCC_SIZE = SCC.size();
+		std::vector<std::vector<bool>> is_connected(SCC_SIZE, std::vector<bool>(SCC_SIZE, false));
 		Graph cg(SCC_SIZE, Graph_Type::Directed);
 		for (auto i = 0; i < n; ++i) {
 			size_t temp1 = SCC_info[i];
 			for (auto neighbor : adj[i]) {
 				size_t temp2 = SCC_info[neighbor];
-				if (temp1 != temp2) {
+				if ((temp1 != temp2) && !is_connected[temp1][temp2]) {
 					cg.add_edge(temp1, temp2);
+					is_connected[temp1][temp2] = true;
 				}
 			}
 		}
 		for (auto i = 0; i < SCC_SIZE; ++i) {
 			std::sort(cg.adj[i].begin(), cg.adj[i].end());
-		}
-		for (auto i = 0; i < SCC_SIZE; ++i) {
-			auto last = std::unique(cg.adj[i].begin(), cg.adj[i].end());
-			cg.adj[i].erase(last, cg.adj[i].end());
 		}
 		return cg;
 	}
