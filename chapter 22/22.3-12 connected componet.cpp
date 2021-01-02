@@ -34,7 +34,7 @@ public:
 		}
 	}
 
-	using vertex_info = std::tuple<Color, size_t, size_t, size_t, size_t>;	// u.color, u.d, u.f, u.phi, u.cc
+	using vertex_info = std::tuple<Color, size_t, size_t, int, size_t>;	// u.color, u.d, u.f, u.phi, u.cc
 
 	void DFS() {
 		std::vector<vertex_info> info(n, { Color::White, 0, 0, -1, 0 });
