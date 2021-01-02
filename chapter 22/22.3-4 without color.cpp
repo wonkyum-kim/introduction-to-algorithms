@@ -5,7 +5,7 @@
 #include <numeric>
 #include <queue>
 #include <utility>
-
+	
 enum class Graph_Type {
 	Directed, Undirected
 };
