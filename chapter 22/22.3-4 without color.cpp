@@ -30,7 +30,7 @@ public:
 		}
 	}
 
-	using vertex_info = std::tuple<bool, size_t, size_t, size_t>;	// u.visit, u.d, u.f, u.phi
+	using vertex_info = std::tuple<bool, size_t, size_t, int>;	// u.visit, u.d, u.f, u.phi
 
 	void DFS() {
 		std::vector<vertex_info> info(n, { false, 0, 0, -1 });
