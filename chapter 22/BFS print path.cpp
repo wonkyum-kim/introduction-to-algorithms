@@ -33,7 +33,7 @@ public:
 		}
 	}
 
-	using vertex_info = std::tuple<Color, size_t, size_t>;	// u.color, u.d, u.phi
+	using vertex_info = std::tuple<Color, size_t, int>;	// u.color, u.d, u.phi
 
 	std::vector<vertex_info> BFS(size_t s) {
 		std::vector<vertex_info> info(n, { Color::White,std::numeric_limits<size_t>::max(), -1 });
