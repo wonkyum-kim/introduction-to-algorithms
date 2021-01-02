@@ -14,7 +14,6 @@ class Graph {
 private:
 	using vertex = size_t;
 	using edge_weight = double;
-	using edge = std::tuple<vertex, vertex, edge_weight>;
 
 	vertex n;
 	Graph_Type type;
@@ -30,7 +29,7 @@ public:
 		}
 	}
 
-	using vertex_info = std::tuple<bool, size_t, size_t>;	// u.visit, u.d, u.phi
+	using vertex_info = std::tuple<bool, size_t, int>;	// u.visit, u.d, u.phi
 
 	std::vector<vertex_info> BFS(size_t s) {
 		std::vector<vertex_info> info(n, { false, std::numeric_limits<size_t>::max(), -1 });
