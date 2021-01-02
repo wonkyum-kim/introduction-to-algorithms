@@ -19,7 +19,7 @@ private:
 		Color color = Color::White;
 		size_t d = 0;
 		size_t f = 0;
-		size_t phi = -1;
+		int phi = -1;
 	};
 
 	vertex n;
