@@ -14,7 +14,6 @@ class Graph {
 private:
 	using vertex = size_t;
 	using edge_weight = double;
-	using edge = std::tuple<vertex, vertex, edge_weight>;
 
 	enum class Color {
 		White, Gray, Black
@@ -34,7 +33,7 @@ public:
 		}
 	}
 
-	using vertex_info = std::tuple<Color, size_t, size_t, size_t>;	// u.color, u.d, u.f, u.phi
+	using vertex_info = std::tuple<Color, size_t, size_t, int>;	// u.color, u.d, u.f, u.phi
 
 	void DFS() {
 		std::vector<vertex_info> info(n, { Color::White, 0, 0, -1 });
