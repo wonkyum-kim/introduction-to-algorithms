@@ -78,7 +78,7 @@ private:
 					ap[u] = true;
 				}
 			}
-			else {
+			else if (v != info[u].phi) {
 				info[u].low = std::min(info[u].low, info[v].d);
 			}
 		}
