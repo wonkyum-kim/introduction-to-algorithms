@@ -51,7 +51,6 @@ public:
 	}
 
 	void get_degree() {
-		assert(g_type == Graph_Type::Undirected);
 		for (auto i = 0; i < n; ++i) {
 			std::cout << info[i].in + info[i].out << ' ';
 		}
@@ -67,5 +66,5 @@ int main()
 	g.add_edge(3, 1);
 	g.get_indegree();
 	g.get_outdegree();
-	// g.get_degree();
+	g.get_degree();
 }
