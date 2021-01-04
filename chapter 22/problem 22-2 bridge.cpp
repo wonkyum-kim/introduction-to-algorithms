@@ -20,6 +20,7 @@ private:
 		size_t d = 0;
 		size_t f = 0;
 		int phi = -1;
+		size_t children = 0;
 		size_t low = 0;
 	};
 
@@ -42,8 +43,8 @@ public:
 	void DFS() {
 		size_t time = 0;
 		for (auto i = 0; i < n; ++i) {
-			if (!info[i].d) {
-				DFS_visit(i, i, time);
+			if (info[i].color == Color::White) {
+				DFS_visit(i, time);
 			}
 		}
 	}
@@ -58,16 +59,17 @@ public:
 	}
 
 private:
-	void DFS_visit(vertex u, int p, size_t& time) {
+	void DFS_visit(vertex u, size_t& time) {
 		++time;
-		info[u].low = time;
 		info[u].d = time;
+		info[u].color = Color::Gray;
+		info[u].low = time;
 		for (auto v : adj[u]) {
-			if (v == p) {
-				continue;
-			}
-			if (!info[v].d) {
-				DFS_visit(v, u, time);
+			if (info[v].color == Color::White) {
+				info[v].phi = u;
+				info[u].children++;
+				DFS_visit(v, time);
+				info[u].low = std::min(info[u].low, info[v].low);
 				if (info[u].d < info[v].low) {
 					if (u < v) {
 						br.push_back({ u,v });
@@ -76,12 +78,14 @@ private:
 						br.push_back({ v,u });
 					}
 				}
-				info[u].low = std::min(info[u].low, info[v].low);
 			}
-			else {
+			else if (v != info[u].phi) {
 				info[u].low = std::min(info[u].low, info[v].d);
 			}
 		}
+		info[u].color = Color::Black;
+		++time;
+		info[u].f = time;
 	}
 
 };
