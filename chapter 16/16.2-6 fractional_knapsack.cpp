@@ -17,6 +17,7 @@ double fractional_knapsack(std::vector<std::pair<double, double>>& stuff, int n,
 		else {
 			double fraction = W - cur_weight;
 			final_value += fraction * stuff[i].second / stuff[i].first;
+			break;
 		}
 	}
 	return final_value;
@@ -34,5 +35,5 @@ int main()
 		std::cin >> weight >> value;
 		stuff.push_back({ weight, value });
 	}
-	std::cout << knapsack(stuff, n, W);
+	std::cout << fractional_knapsack(stuff, n, W);
 }
