@@ -45,7 +45,7 @@ int MST_Kruskal(std::vector<std::tuple<int, int, int>>&edges)
 			ans += std::get<2>(x);
 		}
 	}
-	std::cout << ans;
+	return ans;
 }
 
 int main()
