@@ -1,3 +1,17 @@
-# introduction-to-algorithms
+# INTRODUCTION TO ALGORITHMS
 
-solutions for exercises and problems
+
+코드로 구현할 수 있는 문제들은 구현하였다.
+
+증명문제들은 풀 수 있는 것만 풀었다.
+
+***
+
+**증명 문제들은 천천히 올라갈 예정**
+
+**언젠가는 못 푼 문제들도 풀어서 올릴 예정**
+
+**예전에 올린 코드들은 구식이거나 잘못된게 있을 수 있음 -> 차차 고쳐나갈 예정**
+
+
+
