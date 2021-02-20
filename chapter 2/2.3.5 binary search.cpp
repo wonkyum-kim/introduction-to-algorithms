@@ -1,12 +1,11 @@
 #include <iostream>
 #include <vector>
-#include <stdexcept>
+#include <cassert>
 
 template<typename T>
 int binary_search(std::vector<T>& A, const size_t left, const size_t right, const T target)
 {
-	if (left > right)	
-	    throw std::invalid_argument{"left must not bigger than right"};
+	assert(left <= right);
 	size_t mid = (left + right) / 2;
 	if (A[mid] > target)
 		binary_search(A, left, mid - 1, target);
