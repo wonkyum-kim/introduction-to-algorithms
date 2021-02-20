@@ -69,7 +69,7 @@ int main()
 	std::vector<int> v(SIZE + 1);
 	std::iota(v.begin() + 1, v.end(), 1);
 	std::shuffle(v.begin() + 1, v.end(), gen);
-    merge_sort<int>(v, 1, v.size() - 1);
+    	merge_sort<int>(v, 1, v.size() - 1);
 	for (auto x : v) {
 		std::cout << x << ' ';
 	}
