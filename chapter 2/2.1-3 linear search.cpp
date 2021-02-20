@@ -15,5 +15,11 @@ int linear_search(const std::vector<T>& A, const T key)
 int main()
 {
 	std::vector<int> v = { 5,2,3,1,4 };
-	std::cout << linear_search(v, 3) + 1;
+	auto ans = linear_search(v, 3);
+	if(ans == -1) {
+		std::cout << "NIL";
+	}
+	else {
+		std::cout << ans + 1;
+	}
 }
