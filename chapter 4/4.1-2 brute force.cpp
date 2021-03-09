@@ -3,17 +3,17 @@
 #include <limits>
 #include <tuple>
 
-using ans_type = std::tuple<size_t, size_t, int>;
+using tuple = std::tuple<int, int, int>;
 
 template<typename T>
-ans_type brute_force(const std::vector<T>& A)
+tuple brute_force(const std::vector<T>& A)
 {
-	int max_sum = std::numeric_limits<int>::min();		// sentinel value;
-	size_t max_left = 1;
-	size_t max_right = 1;
-	for (size_t i = 1; i < A.size(); i++) {
+	int max_sum = std::numeric_limits<int>::min();		
+	int max_left = 1;
+	int max_right = 1;
+	for (int i = 1; i < A.size(); i++) {
 		int sum = 0;
-		for (size_t j = i; j < A.size(); j++) {
+		for (int j = i; j < A.size(); j++) {
 			sum += A[j];
 			if (max_sum < sum) {
 				max_left = i;
