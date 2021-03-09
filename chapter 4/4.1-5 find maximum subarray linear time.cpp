@@ -4,23 +4,19 @@
 #include <numeric>
 #include <utility>
 
-size_t maximum_subarray(const std::vector<int>& nums, const size_t n)
+int maximum_subarray(const std::vector<int>& nums, const size_t n)
 {
-    if (n == 1) {
-        return nums[1];
+    int best = 0;
+    int curr = 0;
+    for (auto i = 1; i <= n; ++i) {
+        curr = std::max(curr + nums[i], 0);
+        best = std::max(best, curr);
     }
-    std::vector<int> dp(n + 1);
-    dp[1] = nums[1];
-    auto max = dp[1];
-    for (auto i = 2; i <= n; ++i) {
-        dp[i] = std::max(0, dp[i - 1]) + nums[i];
-        max = std::max(max, dp[i]);
-    }
-    return max;
+    return best;
 }
 
 int main()
 {
-	std::vector<int> v{ 0, 13, -3, -25, 20, -3, -16, -23, 18, 20, -7, 12, -5, -22, 15, -4, 7 };
+    std::vector<int> v{ 0, 13, -3, -25, 20, -3, -16, -23, 18, 20, -7, 12, -5, -22, 15, -4, 7 };
     std::cout << maximum_subarray(v, 16);
 }
