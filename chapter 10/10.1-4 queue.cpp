@@ -3,87 +3,52 @@
 #include <algorithm>
 #include <memory>
 #include <cassert>
+#include <array>
 
 
-template<typename T>
-class Circular_Queue {
-private:
-    using pointer = T*;
-    std::unique_ptr<T[]> data;
-    const size_t size;
-    pointer head;
-    pointer tail;
+template<typename T, size_t N>
+struct Queue {
+    std::array<T, N> data;
+    int f;
+    int size;
 
-    pointer prev(pointer p) const {
-        // p가 맨 앞의 원소를 가리킨다면
-        if (p == data.get()) {
-            return data.get() + size - 1;
-        }
-        return p - 1;
+    Queue() : data{}, f{ 0 }, size{ 0 } {};
+
+    bool is_empty() {
+        return size == 0;
     }
 
-    pointer next(pointer p) const {
-        // p가 맨 뒤의 원소를 가리킨다면
-        if (p == data.get() + size - 1) {
-            return data.get();
-        }
-        return p + 1;
-    }
-public:
-    Circular_Queue(size_t k)
-        : data(std::make_unique<T[]>(k)),
-        size(k),
-        head(data.get()),
-        tail(data.get()) {}
-
-    void push(const T value) {
-        assert(!is_full(), "queue overflow");
-        *tail = value;
-        tail = next(tail);
-        if (tail == head) {
-            tail = nullptr;
-        }
+    void enqueue(const T x) {
+        int temp = (f + size) % N;
+        assert(size != N);
+        data[temp] = x;
+        size++;
     }
 
-    void pop() {
-        assert(!is_empty(), "queue underflow");
-        if (is_full()) {
-            tail = head;
-        }
-        head = next(head);
+    void dequeue() {
+        assert(!is_empty());
+        f = (f + 1) % N;
+        size--;
     }
 
     T front() {
-        assert(!is_empty(), "empty");
-        return *head;
+        assert(!is_empty());
+        return data[f];
     }
-
-    T back() {
-        assert(!is_empty(), "empty");
-        return *prev(tail);
-    }
-
-    bool is_empty() {
-        return head == tail;
-    }
-
-    bool is_full() {
-        return tail == nullptr;
-    }
- };
+};
 
 
 int main()
 {
-    Circular_Queue<int> cq(6);
-    cq.push(4);
-    cq.push(1);
-    cq.push(3);
-    cq.pop();
-    cq.push(8);
-    cq.pop();
-    while (!cq.is_empty()) {
-        std::cout << cq.front() << ' ';
-        cq.pop();
+    Queue<int, 5> q;
+    q.enqueue(3);
+    std::cout << q.front() << '\n';
+    q.enqueue(5);
+    std::cout << q.front() << '\n';
+    q.dequeue();
+    std::cout << q.front() << '\n';
+    q.dequeue();
+    if (q.is_empty()) {
+        std::cout << "empty\n";
     }
-} 
+}
