@@ -7,29 +7,23 @@
 template<typename T>
 class Stack {
 private:
-	std::unique_ptr<T[]> data;
-	size_t size;
-	size_t t;
+	std::vector<T> data;
+	int size;
+	int t;
 
 public:
-	Stack(size_t k) :
-		data(std::make_unique<T[]>(k)),
-		size(k),
-		t(0) {}
-
-	bool is_empty() {
-		return t == 0;
+	Stack(size_t k) : size(k), t(-1) {
+		data.resize(k);
 	}
 
-	bool is_full() {
-		return t == size;
+	bool is_empty() {
+		return t == -1;
 	}
 
 	void push(T x) {
-		assert(!is_full());
-		auto p = data.get() + t;
-		*p = x;
+		assert(t != data.size());
 		t++;
+		data[t] = x;
 	}
 
 	void pop() {
@@ -39,8 +33,7 @@ public:
 
 	T top() {
 		assert(!is_empty());
-		auto p = data.get() + t - 1;
-		return *p;
+		return data[t];
 	}
 };
 
@@ -48,9 +41,15 @@ int main()
 {
 	Stack<int> s(6);
 	s.push(4);
+	std::cout << s.top() << '\n';
 	s.push(1);
+	std::cout << s.top() << '\n';
 	s.push(3);
+	std::cout << s.top() << '\n';
 	s.pop();
+	std::cout << s.top() << '\n';
 	s.push(8);
+	std::cout << s.top() << '\n';
 	s.pop();
+	std::cout << s.top() << '\n';
 }
