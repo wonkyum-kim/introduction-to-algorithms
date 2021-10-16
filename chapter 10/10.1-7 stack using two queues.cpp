@@ -4,33 +4,28 @@
 
 template<typename T>
 struct Stack {
+
 	std::queue<T> A;
 	std::queue<T> B;
+
 	Stack() : A{}, B{}	{};
-	void push(const T x);
-	T pop();
-};
 
-template<typename T>
-void Stack<T>::push(const T x)
-{
-	A.push(x);
-}
+	void push(const T x) {
+		A.push(x);
+	}
 
-template<typename T>
-T Stack<T>::pop()
-{
-	while (A.size() > 1)
-	{
+	T pop() {
+		while (A.size() > 1) {
+			T x = A.front();
+			A.pop();
+			B.push(x);
+		}
 		T x = A.front();
 		A.pop();
-		B.push(x);
+		std::swap(A, B);
+		return x;
 	}
-	T x = A.front();
-	A.pop();
-	std::swap(A, B);
-	return x;
-}
+};
 
 int main()
 {
