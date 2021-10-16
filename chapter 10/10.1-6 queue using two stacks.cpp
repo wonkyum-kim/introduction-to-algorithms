@@ -8,33 +8,30 @@
 
 template<typename T>
 struct Queue {
+
 	std::stack<T> A;
 	std::stack<T> B;
+
 	Queue() : A{}, B{}	{};
-	void push(const T x);
-	T pop();
+
+	void push(const T x) {
+		A.push(x);
+	}
+
+	T pop(){
+		if (B.empty()) {
+			while (!A.empty()) {
+				T x = A.top();
+				A.pop();
+				B.push(x);
+			}
+		}
+		T y = B.top();
+		B.pop();
+		return y;
+	}
 };
 
-template<typename T>
-void Queue<T>::push(const T x) 
-{
-	A.push(x);
-}
-
-template<typename T>
-T Queue<T>::pop()
-{
-	if (B.empty()) {
-		while (!A.empty()) {
-			T x = A.top();
-			A.pop();
-			B.push(x);
-		}
-	}
-	T y = B.top();
-	B.pop();
-	return y;
-}
 
 int main()
 {
