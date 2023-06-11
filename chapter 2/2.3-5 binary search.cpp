@@ -1,22 +1,26 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
 
-template<typename T>
-int binary_search(std::vector<T>& A, const size_t left, const size_t right, const T target)
+bool binary_search(std::vector<int>& A, const int a, const int b, const int target)
 {
-	assert(left <= right);
-	size_t mid = (left + right) / 2;
-	if (A[mid] > target)
-		binary_search(A, left, mid - 1, target);
-	else if (A[mid] < target)
-		binary_search(A, mid + 1, right, target);
-	else
-		return mid;
+    int left = a;
+    int right = b;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (A[mid] == target) {
+            return true;
+        } else if (A[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return false;
 }
 
 int main()
 {
-	std::vector<int> A{ 1,2,3,4,5 };
-	std::cout << binary_search<int>(A, 0, A.size() - 1, 3);
+    std::vector<int> A { 1, 2, 3, 4, 5 };
+    std::cout << binary_search(A, 0, A.size() - 1, 1) << '\n'
+              << binary_search(A, 0, A.size() - 1, 6) << '\n';
 }
